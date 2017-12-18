@@ -273,7 +273,12 @@ Causes the date/time picker to re-render its view when the specified event is re
 For example, if you want to disable any dates or times that are in the past. 
 You can $broadcast the event at an interval to disable times in the past (or any other time valid dates change).
 
-### modelType
+### Inputs
+
+#### modelType
+
+### Events
+
 
 String. Default: ```'Date'```
 
