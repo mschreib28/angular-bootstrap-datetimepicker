@@ -18,6 +18,11 @@ const viewToNextView = Object
 
 export class DlDateTimePickerChange {
 
+  utc: number;
+
+  constructor(milliseconds: number) {
+    this.utc = milliseconds;
+  }
 }
 
 @Component({
@@ -69,7 +74,7 @@ export class DlDateTimePickerComponent implements OnInit {
     this._view = viewToNextView[this._currentView];
     this._model = this.getModel(milliseconds);
     if (!this._view) {
-      const change = new DlDateTimePickerChange();
+      const change = new DlDateTimePickerChange(milliseconds);
       this._change.emit(change);
     }
   }

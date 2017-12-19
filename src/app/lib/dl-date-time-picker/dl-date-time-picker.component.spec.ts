@@ -102,7 +102,6 @@ describe('DlDateTimePickerComponent default configuration', () => {
     expect(hours[23].nativeElement.textContent.trim()).toBe('11:00 PM');
   });
 
-
   it('should change to minute-view when .minute element is clicked', function () {
     const days = fixture.debugElement.queryAll(By.css('.day'));
     days[0].nativeElement.click();  // 2017-11-26
@@ -125,9 +124,7 @@ describe('DlDateTimePickerComponent default configuration', () => {
     expect(minutes[4].nativeElement.textContent.trim()).toBe('2:20 PM');
     expect(minutes[8].nativeElement.textContent.trim()).toBe('2:40 PM');
     expect(minutes[11].nativeElement.textContent.trim()).toBe('2:55 PM');
-
   });
-
 
   it('should raise change event when .minute element is clicked after drilling down through all views', () => {
     const changeSpy = jasmine.createSpy('change listener');
@@ -142,7 +139,7 @@ describe('DlDateTimePickerComponent default configuration', () => {
     expect(changeSpy).not.toHaveBeenCalled();
 
     const hours = fixture.debugElement.queryAll(By.css('.hour'));
-    hours[0].nativeElement.click();
+    hours[14].nativeElement.click();  // 2:00 PM
     fixture.detectChanges();
 
     const minuteView = fixture.debugElement.query(By.css('.minute-view'));
@@ -150,10 +147,11 @@ describe('DlDateTimePickerComponent default configuration', () => {
     expect(changeSpy).not.toHaveBeenCalled();
 
     const minutes = fixture.debugElement.queryAll(By.css('.minute'));
-    minutes[0].nativeElement.click();
+    minutes[11].nativeElement.click(); // 2:55 PM
     fixture.detectChanges();
 
     expect(changeSpy).toHaveBeenCalled();
+    expect(changeSpy.calls.first().args[0].utc).toBe(1511708100000);
 
     // expect(nativeElement.dirty)
     //  .toBe(true, `Expected control to become dirty when time was selected by CLICK.`);

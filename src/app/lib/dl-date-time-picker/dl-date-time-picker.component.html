@@ -14,7 +14,7 @@
        class="row align-items-center no-gutters"
   >
     <div *ngFor="let date of row.dates"
-         class="col date-button {{_currentView}}"
+         class="col date-button {{_currentView}} {{date.value}}"
          [ngClass]="date.classes"
          (click)="_onDateClick(date.value)"
     >
