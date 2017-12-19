@@ -268,7 +268,7 @@ interface DlDateTimePickerModel {
   upViewButton: {
     display: string;
     value: number;
-  }
+  };
   labels: Array<string>;
   rows: Array<{ dates: Array<{ display: string, value: number, classes: {} }> }>;
 }
