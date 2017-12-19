@@ -4,7 +4,7 @@
          [ngClass]="{'up-button': _currentView !== 'year'}"
          (click)="_onUpClick($event)"
     >
-      {{_model.upLabel}}<ng-container *ngTemplateOutlet="_currentView === 'year' ? '' : defaultUpButton"></ng-container>
+      {{_model.upViewButton.display}}<ng-container *ngTemplateOutlet="_currentView === 'year' ? '' : defaultUpArrow"></ng-container>
     </div>
   </div>
   <div class="row align-items-center no-gutters">
@@ -16,13 +16,13 @@
     <div *ngFor="let date of row.dates"
          class="col date-button {{_currentView}}"
          [ngClass]="date.classes"
-         (click)="_onDateClick($event)"
+         (click)="_onDateClick(date.value)"
     >
       {{date.display}}
     </div>
   </div>
 </div>
 
-<ng-template #defaultUpButton>
+<ng-template #defaultUpArrow>
   &nbsp;<span class="oi oi-chevron-top"></span>
 </ng-template>

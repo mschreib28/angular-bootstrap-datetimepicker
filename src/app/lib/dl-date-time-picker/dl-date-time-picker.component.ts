@@ -57,34 +57,37 @@ export class DlDateTimePickerComponent implements OnInit {
 
   ngOnInit() {
     this._view = this._currentView;
-    this._model = this.getModel();
+    this._model = this.getModel(new Date().getTime());
   }
 
   _onUpClick() {
     this._view = viewToUpView[this._currentView] || this._view;
-    this._model = this.getModel();
+    this._model = this.getModel(new Date().getTime());
   }
 
-  _onDateClick() {
+  _onDateClick(milliseconds: number) {
     this._view = viewToNextView[this._currentView];
-    this._model = this.getModel();
+    this._model = this.getModel(milliseconds);
     if (!this._view) {
       const change = new DlDateTimePickerChange();
       this._change.emit(change);
     }
   }
 
-  private getModel(): DlDateTimePickerModel {
+  private getModel(milliseconds: number): DlDateTimePickerModel {
     const modelFunction = `${this._currentView}Model`;
-    return this[modelFunction]();
+    return this[modelFunction](milliseconds);
   }
 
-  private yearModel(): DlDateTimePickerModel {
+  private yearModel(milliseconds: number): DlDateTimePickerModel {
     const rowNumbers = [0, 1, 2];
     const yearNumbers = [0, 1, 2, 3];
 
     return {
-      upLabel: '2010-2019',
+      upViewButton: {
+        display: '2010-2019',
+        value: 0
+      },
       labels: [],
       rows: rowNumbers.map(rowOfYears)
     };
@@ -118,13 +121,16 @@ export class DlDateTimePickerComponent implements OnInit {
     }
   }
 
-  private monthModel(): DlDateTimePickerModel {
+  private monthModel(milliseconds: number): DlDateTimePickerModel {
 
     const rowNumbers = [0, 1, 2];
     const monthNumbers = [0, 1, 2, 3];
 
     return {
-      upLabel: '2017',
+      upViewButton: {
+        display: '2017',
+        value: 0
+      },
       labels: [],
       rows: rowNumbers.map(rowOfMonths)
     };
@@ -133,7 +139,7 @@ export class DlDateTimePickerComponent implements OnInit {
       const startDate = moment.utc().startOf('year');
       const currentMoment = moment.utc();
       const dates = monthNumbers.map((monthNumber) => {
-        const monthMoment = moment.utc(startDate).add((rowNumber * rowNumbers.length) + monthNumber, 'months');
+        const monthMoment = moment.utc(startDate).add((rowNumber * monthNumbers.length) + monthNumber, 'months');
         return {
           'display': monthMoment.format('MMM'),
           'value': monthMoment.valueOf(),
@@ -148,7 +154,7 @@ export class DlDateTimePickerComponent implements OnInit {
     }
   }
 
-  private dayModel(): DlDateTimePickerModel {
+  private dayModel(milliseconds: number): DlDateTimePickerModel {
     const dayNumbers = [0, 1, 2, 3, 4, 5, 6];
     const rowNumbers = [0, 1, 2, 3, 4, 5];
 
@@ -158,7 +164,10 @@ export class DlDateTimePickerComponent implements OnInit {
     const currentMoment = moment.utc();
 
     return {
-      upLabel: startOfMonth.format(this.dayViewLabelFormat),
+      upViewButton: {
+        display: startOfMonth.format(this.dayViewLabelFormat),
+        value: 0
+      },
       labels: dayNumbers.map((dayNumber) => moment.utc().weekday(dayNumber).format('dd')),
       rows: rowNumbers.map(rowOfDays)
     };
@@ -180,22 +189,25 @@ export class DlDateTimePickerComponent implements OnInit {
     }
   }
 
-  private hourModel(): DlDateTimePickerModel {
+  private hourModel(milliseconds: number): DlDateTimePickerModel {
     const hourNumbers = [0, 1, 2, 3];
     const rowNumbers = [0, 1, 2, 3, 4, 5];
 
-    const startDate = moment.utc().startOf('day');
+    const startDate = moment.utc(milliseconds).startOf('day');
     const currentMoment = moment.utc();
 
     return {
-      upLabel: moment.utc().format('ll'),
+      upViewButton: {
+        display: startDate.format('ll'),
+        value: 0
+      },
       labels: [],
       rows: rowNumbers.map(rowOfHours)
     };
 
     function rowOfHours(rowNumber, index, rows) {
       const dates = hourNumbers.map((hourNumber) => {
-        const hourMoment = moment.utc(startDate).add((rowNumber * rows.length) + hourNumber, 'hours');
+        const hourMoment = moment.utc(startDate).add((rowNumber * hourNumbers.length) + hourNumber, 'hours');
         return {
           'display': hourMoment.format('LT'),
           'value': hourMoment.valueOf(),
@@ -208,17 +220,20 @@ export class DlDateTimePickerComponent implements OnInit {
     }
   }
 
-  private minuteModel(): DlDateTimePickerModel {
+  private minuteModel(milliseconds: number): DlDateTimePickerModel {
     const minuteNumbers = [0, 1, 2, 3];
     const rowCount = (60 / this.minuteStep) / 4;
 
     const rowNumbers = Array.from(Array(rowCount).keys());
     const minuteStep = this.minuteStep;
-    const startDate = moment.utc().startOf('day');
+    const startDate = moment.utc(milliseconds).startOf('hour');
     const currentMoment = moment.utc();
 
     return {
-      upLabel: moment.utc().format('LT'),
+      upViewButton: {
+        display: moment.utc(milliseconds).format('lll'),
+        value: 0
+      },
       labels: [],
       rows: rowNumbers.map(rowOfMinutes)
     };
@@ -245,7 +260,10 @@ export class DlDateTimePickerComponent implements OnInit {
 declare type DlDateTimePickerView = 'year' | 'month' | 'day' | 'hour' | 'minute';
 
 interface DlDateTimePickerModel {
-  upLabel: string;
+  upViewButton: {
+    display: string;
+    value: number;
+  }
   labels: Array<string>;
   rows: Array<{ dates: Array<{ display: string, value: number, classes: {} }> }>;
 }

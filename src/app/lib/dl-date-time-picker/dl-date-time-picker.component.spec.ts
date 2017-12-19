@@ -79,12 +79,62 @@ describe('DlDateTimePickerComponent default configuration', () => {
     expect(yearView).toBeTruthy();
   });
 
+  it('should change to hour-view when .day element is clicked', function () {
+    const days = fixture.debugElement.queryAll(By.css('.day'));
+    days[0].nativeElement.click();
+    fixture.detectChanges();
+
+    const hourView = fixture.debugElement.query(By.css('.hour-view'));
+    expect(hourView).toBeTruthy();
+
+    const upButton = fixture.debugElement.query(By.css('.up-button')).nativeElement;
+    // Starting with Dec 2017 so the 0'th day is Nov 26.
+    const text = moment('2017-11-26').format('ll');
+    expect(upButton.textContent.trim()).toMatch(new RegExp(`^${text}*`));
+
+    const hours = fixture.debugElement.queryAll(By.css('.hour'));
+    expect(hours[0].nativeElement.textContent.trim()).toBe('12:00 AM');
+    expect(hours[4].nativeElement.textContent.trim()).toBe('4:00 AM');
+    expect(hours[8].nativeElement.textContent.trim()).toBe('8:00 AM');
+    expect(hours[12].nativeElement.textContent.trim()).toBe('12:00 PM');
+    expect(hours[16].nativeElement.textContent.trim()).toBe('4:00 PM');
+    expect(hours[20].nativeElement.textContent.trim()).toBe('8:00 PM');
+    expect(hours[23].nativeElement.textContent.trim()).toBe('11:00 PM');
+  });
+
+
+  it('should change to minute-view when .minute element is clicked', function () {
+    const days = fixture.debugElement.queryAll(By.css('.day'));
+    days[0].nativeElement.click();  // 2017-11-26
+    fixture.detectChanges();
+
+    const hours = fixture.debugElement.queryAll(By.css('.hour'));
+    hours[14].nativeElement.click(); // 2:00 pm
+    fixture.detectChanges();
+
+    const minuteView = fixture.debugElement.query(By.css('.minute-view'));
+    expect(minuteView).toBeTruthy();
+
+    const upButton = fixture.debugElement.query(By.css('.up-button')).nativeElement;
+    // Starting with Dec 2017 so the 0'th day is Nov 26.
+    const text = moment('2017-11-26T14:00').format('lll');
+    expect(upButton.textContent.trim()).toMatch(new RegExp(`^${text}*`));
+
+    const minutes = fixture.debugElement.queryAll(By.css('.minute'));
+    expect(minutes[0].nativeElement.textContent.trim()).toBe('2:00 PM');
+    expect(minutes[4].nativeElement.textContent.trim()).toBe('2:20 PM');
+    expect(minutes[8].nativeElement.textContent.trim()).toBe('2:40 PM');
+    expect(minutes[11].nativeElement.textContent.trim()).toBe('2:55 PM');
+
+  });
+
+
   it('should raise change event when .minute element is clicked after drilling down through all views', () => {
     const changeSpy = jasmine.createSpy('change listener');
     component.change.subscribe(changeSpy);
 
     const days = fixture.debugElement.queryAll(By.css('.day'));
-    days[0].nativeElement.click();
+    days[0].nativeElement.click();  // 2017-11-26
     fixture.detectChanges();
 
     const hourView = fixture.debugElement.query(By.css('.hour-view'));
