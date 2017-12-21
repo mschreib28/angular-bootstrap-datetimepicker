@@ -1,28 +1,24 @@
-<div class="{{_currentView}}-view text-center">
+<div class="text-center {{_model.view}}-view ">
   <div class="row align-items-center no-gutters">
-    <div class="col label"
-         [ngClass]="{'up-button': _currentView !== 'year'}"
-         (click)="_onUpClick($event)"
-    >
-      {{_model.upViewButton.display}}<ng-container *ngTemplateOutlet="_currentView === 'year' ? '' : defaultUpArrow"></ng-container>
+    <div class="col left-button"
+         [ngClass]="_model.leftButton.classes"
+         (click)="_onLeftClick()">
+      <span [ngClass]="_model.leftButton.iconClasses"></span>
+      <span class="sr-only">Previous decade</span>
+    </div>
+    <div class="col view-label">2010-2019</div>
+    <div class="col right-button"
+         (click)="_onRightClick()"
+         [ngClass]="_model.rightButton.classes">
+      <span [ngClass]="_model.rightButton.iconClasses"></span>
+      <span class="sr-only">Next decade</span>
     </div>
   </div>
-  <div class="row align-items-center no-gutters">
-    <div class="col label" *ngFor="let label of _model.labels">{{label}}</div>
-  </div>
-  <div *ngFor="let row of _model.rows"
-       class="row align-items-center no-gutters"
-  >
-    <div *ngFor="let date of row.dates"
-         class="col date-button {{_currentView}} {{date.value}}"
-         [ngClass]="date.classes"
-         (click)="_onDateClick(date.value)"
-    >
-      {{date.display}}
-    </div>
+  <div *ngFor="let row of _model.rows" class="row align-items-center no-gutters">
+    <div *ngFor="let cell of row.cells"
+         class="col date-button {{_model.view}} {{cell.value}}"
+         [ngClass]="cell.classes"
+         (click)="_onDateClick(cell.value)"
+    >{{cell.display}}</div>
   </div>
 </div>
-
-<ng-template #defaultUpArrow>
-  &nbsp;<span class="oi oi-chevron-top"></span>
-</ng-template>

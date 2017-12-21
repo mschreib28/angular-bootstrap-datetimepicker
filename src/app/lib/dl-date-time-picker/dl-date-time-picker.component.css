@@ -2,11 +2,10 @@
   user-select: none;
 }
 
-.label {
+.view-label {
   font-weight: bold;
 }
 
-.up-button,
 .left-button,
 .right-button,
 .date-button {
@@ -16,7 +15,6 @@
   color: hsla(0, 0%, 0%, 0.87);
 }
 
-.up-button:hover,
 .left-button:hover,
 .right-button:hover,
 .date-button:hover {

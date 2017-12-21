@@ -16,6 +16,10 @@
   </div>
 
   <div>
-    <dl-date-time-picker class="en" [startView]="startView"></dl-date-time-picker>
+    <dl-date-time-picker class="en" [startView]="startView" [(ngModel)]="selectedDate"></dl-date-time-picker>
+  </div>
+
+  <div>
+    Selected Date: {{selectedDate}}
   </div>
 </div>

@@ -10,7 +10,7 @@
     "ng": "ng",
     "start": "ng serve",
     "test": "ng lint && ng test --single-run --code-coverage",
-    "test:tdd": "ng test"
+    "test:tdd": "ng lint && ng test"
   },
   "keywords": [
     "angular 5",

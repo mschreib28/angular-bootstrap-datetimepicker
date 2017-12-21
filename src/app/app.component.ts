@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
+import {DlDateTimePickerComponent} from './lib/dl-date-time-picker/dl-date-time-picker.component';
 
 @Component({
   selector: 'dl-root',
@@ -8,4 +9,5 @@ import { Component } from '@angular/core';
 export class AppComponent {
   title = 'Dale Lotts\' angular bootstrap date & time picker';
   startView = 'day';
+  selectedDate: number;
 }
