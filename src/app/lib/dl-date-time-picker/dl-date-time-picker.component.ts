@@ -201,11 +201,3 @@ interface DlDateTimePickerModel {
     }>
   }>;
 }
-
-export interface DlDateTimePickerModelFactory {
-  year: (value: number) => DlDateTimePickerModel;
-  month: (value: number) => DlDateTimePickerModel;
-  day: (value: number) => DlDateTimePickerModel;
-  hour: (value: number) => DlDateTimePickerModel;
-  minute: (value: number) => DlDateTimePickerModel;
-}
