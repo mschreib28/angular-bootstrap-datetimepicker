@@ -55,12 +55,11 @@ export class DlDateTimePickerComponent implements OnInit, ControlValueAccessor {
   private _touched: (() => void)[] = [];
   private _value: number;
 
-
   ngOnInit(): void {
-    this._model = this.nextModel(new Date().getTime());
+    this._model = this.yearModel(new Date().getTime());
   }
 
-  private nextModel(milliseconds: number): DlDateTimePickerModel {
+  private yearModel(milliseconds: number): DlDateTimePickerModel {
     const rowNumbers = [0, 1, 2];
     const yearNumbers = [0, 1, 2, 3];
 
@@ -73,8 +72,13 @@ export class DlDateTimePickerComponent implements OnInit, ControlValueAccessor {
 
     const startDate = moment.utc(`${startDecade}-01-01`).startOf('year');
 
+    // future and past years range is inclusive of start year decade.
+    const futureYear = startDate.year() + 10;
+    const pastYear = startDate.year() + 1;
+
     const result: DlDateTimePickerModel = {
       view: 'year',
+      viewLabel: `${pastYear}-${futureYear}`,
       leftButton: {
         value: moment.utc(startDate).subtract(9, 'years').valueOf(),
         classes: {},
@@ -95,10 +99,6 @@ export class DlDateTimePickerComponent implements OnInit, ControlValueAccessor {
 
     function rowOfYears(rowNumber) {
 
-      // future and past years range is inclusive of start year decade.
-      const futureYear = startDate.year() + 10;
-      const pastYear = startDate.year() + 1;
-
       const currentMoment = moment.utc();
       const cells = yearNumbers.map((yearNumber) => {
         const yearMoment = moment.utc(startDate).add((rowNumber * yearNumbers.length) + yearNumber, 'years');
@@ -116,16 +116,41 @@ export class DlDateTimePickerComponent implements OnInit, ControlValueAccessor {
     }
   }
 
+  private monthModel(milliseconds: number): DlDateTimePickerModel {
+    return {
+      view: 'month',
+      viewLabel: 'month-view',
+      leftButton: {
+        value: 0,
+        classes: {},
+        iconClasses: this.leftIconClass
+      },
+      rightButton: {
+        value: 0,
+        classes: {},
+        iconClasses: this.rightIconClass
+      },
+      rows: [] // rowNumbers.map(rowOfYears)
+    };
+  }
+
   _onDateClick(milliseconds: number) {
-    this.value = milliseconds;
+    if (!this.minView) {
+      this._model = this.monthModel(milliseconds);
+    } else {
+      this.value = milliseconds;
+    }
+    this._onTouch();
   }
 
   _onLeftClick() {
-    this._model = this.nextModel(this._model.leftButton.value);
+    this._model = this.yearModel(this._model.leftButton.value);
+    this._onTouch();
   }
 
   _onRightClick() {
-    this._model = this.nextModel(this._model.rightButton.value);
+    this._model = this.yearModel(this._model.rightButton.value);
+    this._onTouch();
   }
 
   get value() {
@@ -149,11 +174,38 @@ export class DlDateTimePickerComponent implements OnInit, ControlValueAccessor {
   registerOnTouched(fn: () => void) {
     this._touched.push(fn);
   }
+
+  private _onTouch() {
+    this._touched.forEach((onTouch) => onTouch());
+  }
 }
 
 interface DlDateTimePickerModel {
   view: string;
-  leftButton: { value: number, classes: {}, iconClasses: {} };
-  rightButton: { value: number, classes: {}, iconClasses: {} };
-  rows: Array<{ cells: Array<{ display: string, value: number, classes: {} }> }>;
+  viewLabel: string;
+  leftButton: {
+    value: number,
+    classes: {},
+    iconClasses: {}
+  };
+  rightButton: {
+    value: number,
+    classes: {},
+    iconClasses: {}
+  };
+  rows: Array<{
+    cells: Array<{
+      display: string,
+      value: number,
+      classes: {}
+    }>
+  }>;
+}
+
+export interface DlDateTimePickerModelFactory {
+  year: (value: number) => DlDateTimePickerModel;
+  month: (value: number) => DlDateTimePickerModel;
+  day: (value: number) => DlDateTimePickerModel;
+  hour: (value: number) => DlDateTimePickerModel;
+  minute: (value: number) => DlDateTimePickerModel;
 }

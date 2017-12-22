@@ -3,11 +3,13 @@ import {Component, DebugElement, ViewChild} from '@angular/core';
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {By} from '@angular/platform-browser';
 import {FormsModule} from '@angular/forms';
+import * as moment from 'moment';
 
 @Component({
-  template: '<dl-date-time-picker startView="year"></dl-date-time-picker>'
+  template: '<dl-date-time-picker [(ngModel)]="selectedDate" startView="year"></dl-date-time-picker>'
 })
 class StartViewYearComponent {
+  selectedDate: number;
   @ViewChild(DlDateTimePickerComponent) picker: DlDateTimePickerComponent;
 }
 
@@ -15,7 +17,7 @@ class StartViewYearComponent {
   template: '<dl-date-time-picker [(ngModel)]="selectedDate" startView="year" minView="year" maxView="year"></dl-date-time-picker>'
 })
 class YearSelectorComponent {
-  selectedDate: number | undefined;
+  selectedDate: number;
   @ViewChild(DlDateTimePickerComponent) picker: DlDateTimePickerComponent;
 }
 
@@ -77,11 +79,11 @@ describe('DlDateTimePickerComponent', () => {
       const currentElements = fixture.debugElement.queryAll(By.css('.current'));
       expect(currentElements.length).toBe(1);
       expect(currentElements[0].nativeElement.textContent.trim()).toBe('2017');
-      expect(currentElements[0].classes['1483228800000']).toBe(true);
+      expect(currentElements[0].nativeElement.classList).toContain('1483228800000');
     });
 
-    it('should contain 12 .year with start of year utc time as class', () => {
-      const expectedClasses = [
+    it('should contain 12 .year with start of year utc time as class, aria-label', () => {
+      const expectedClass = [
         1230768000000,
         1262304000000,
         1293840000000,
@@ -99,21 +101,25 @@ describe('DlDateTimePickerComponent', () => {
       const yearElements = fixture.debugElement.queryAll(By.css('.year'));
 
       yearElements.forEach((yearElement, index) => {
-        const key = expectedClasses[index];
-        expect(yearElement.classes[key]).toBe(true, index);
+        const key = expectedClass[index];
+        expect(yearElement.nativeElement.classList).toContain(key.toString(10));
+        expect(yearElement.attributes['role']).toBe('gridcell', index);
       });
     });
 
-    it('should has a class for previous decade on .left-button ', () => {
+    it('should have a class for previous decade value on .left-button ', () => {
       const leftButton = fixture.debugElement.query(By.css('.left-button'));
 
       expect(leftButton.classes['946684800000']).toBe(true, leftButton.classes);
     });
 
-    it('should switch to previous decade after clicking .left-button', () => {
+    it('should switch to previous decade value after clicking .left-button', () => {
       const leftButton = fixture.debugElement.query(By.css('.left-button'));
       leftButton.nativeElement.click();
       fixture.detectChanges();
+
+      const viewLabel = fixture.debugElement.query(By.css('.view-label'));
+      expect(viewLabel.nativeElement.textContent).toBe('2000-2009');
 
       const pastElements = fixture.debugElement.queryAll(By.css('.past'));
       expect(pastElements.length).toBe(1);
@@ -121,8 +127,8 @@ describe('DlDateTimePickerComponent', () => {
     });
 
     it('should has a class for previous decade on .right-button ', () => {
-      const rightButton = fixture.debugElement.query(By.css('.right-button'));
-      expect(rightButton.classes['1577836800000']).toBe(true, rightButton.classes);
+      const rightButton = fixture.debugElement.query(By.css('.right-button')).nativeElement;
+      expect(rightButton.classList).toContain('1577836800000');
     });
 
     it('should switch to next decade after clicking .right-button', () => {
@@ -144,6 +150,30 @@ describe('DlDateTimePickerComponent', () => {
       const leftScreenReaderElement = fixture.debugElement.query(By.css('.right-button > .sr-only'));
       expect(leftScreenReaderElement.nativeElement.textContent.trim()).toBe('Next decade');
     });
+
+    it('should not emit a change event when clicking .year', () => {
+      const changeSpy = jasmine.createSpy('change listener');
+      component.picker.change.subscribe(changeSpy);
+
+      const yearElements = fixture.debugElement.queryAll(By.css('.year'));
+      yearElements[11].nativeElement.click(); // 2020
+      fixture.detectChanges();
+
+      expect(changeSpy).not.toHaveBeenCalled();
+    });
+
+    it('should change to .month-view when selecting year', () => {
+      const yearElements = fixture.debugElement.queryAll(By.css('.year'));
+      yearElements[0].nativeElement.click(); // 2009
+      fixture.detectChanges();
+
+      const monthView = fixture.debugElement.query(By.css('.month-view'));
+      expect(monthView).toBeTruthy();
+
+      const yearView = fixture.debugElement.query(By.css('.year-view'));
+      expect(yearView).toBeFalsy();
+    });
+
   });
   describe('year selector (minView=year)', () => {
     let component: YearSelectorComponent;
@@ -157,6 +187,53 @@ describe('DlDateTimePickerComponent', () => {
       debugElement = fixture.debugElement;
       nativeElement = debugElement.nativeElement;
       fixture.detectChanges();
+    });
+
+    it('should be touched when clicking .left-button', () => {
+      // ng-untouched/ng-touched requires ngModel
+      const pickerElement = fixture.debugElement.query(By.css('dl-date-time-picker')).nativeElement;
+      expect(pickerElement.classList).toContain('ng-untouched');
+
+      const leftButton = fixture.debugElement.query(By.css('.left-button'));
+      leftButton.nativeElement.click();
+      fixture.detectChanges();
+
+      expect(pickerElement.classList).toContain('ng-touched');
+    });
+
+    it('should be touched when clicking .right-button', () => {
+      // ng-untouched/ng-touched requires ngModel
+      const pickerElement = fixture.debugElement.query(By.css('dl-date-time-picker')).nativeElement;
+      expect(pickerElement.classList).toContain('ng-untouched');
+
+      const leftButton = fixture.debugElement.query(By.css('.right-button'));
+      leftButton.nativeElement.click();
+      fixture.detectChanges();
+
+      expect(pickerElement.classList).toContain('ng-touched');
+    });
+
+    it('should be touched when clicking .year', () => {
+      // ng-untouched/ng-touched requires ngModel
+      const pickerElement = fixture.debugElement.query(By.css('dl-date-time-picker')).nativeElement;
+      expect(pickerElement.classList).toContain('ng-untouched');
+
+      const yearElement = fixture.debugElement.query(By.css('.year'));
+      yearElement.nativeElement.click();
+      fixture.detectChanges();
+
+      expect(pickerElement.classList).toContain('ng-touched');
+    });
+
+    it('should be dirty when clicking .year', () => {
+      const pickerElement = fixture.debugElement.query(By.css('dl-date-time-picker')).nativeElement;
+      expect(pickerElement.classList).toContain('ng-untouched');
+
+      const yearElement = fixture.debugElement.query(By.css('.year'));
+      yearElement.nativeElement.click();
+      fixture.detectChanges();
+
+      expect(pickerElement.classList).toContain('ng-dirty');
     });
 
     it('should emit a change event when clicking a .year', function () {
@@ -206,25 +283,25 @@ describe('DlDateTimePickerComponent', () => {
     });
   });
 
-  // Selecting 2009 element changes to month view for 2009
+  // tab key  - cycles between left, up, right, and active date in calendar
 
-  // Selecting 2020 element changes to month view for 2020
-
-  // Set's ngModel value when clicking year if minView is year
-
-  // change event is not raised if value is not changed
-
-  // should initial value of null result in a change event?
-
-  // Becomes dirty when value is selected
-
-  // tab key
+  // enter
+  // on left, up, or right = click()
 
   // arrow key
+  // on left, up, or right does nothing
 
-  // screen reader for left and right button
+  // page_up/down
+
+  // up/down arrow moves up/down one row (same cell index)
+
+  // fn + up/down arrow = left/right button click
+  // fn + left/right arrow moves to the first/last date in calendar
+
+
+  // home
+
+  // end
 
   // Other screen reader issues - search for usability issues
-
-
 });
