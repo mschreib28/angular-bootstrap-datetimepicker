@@ -3,6 +3,11 @@ import * as moment from 'moment';
 import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
 import {take} from 'rxjs/operators';
 
+const ENTER = 13;
+const PAGE_UP = 33;
+const PAGE_DOWN = 34;
+const END = 35;
+const HOME = 36;
 const UP_ARROW = 38;
 const DOWN_ARROW = 40;
 const RIGHT_ARROW = 39;
@@ -79,7 +84,7 @@ export class DlDateTimePickerComponent implements OnInit, ControlValueAccessor {
     // View starts one year before the decade starts and ends one year after the decade ends
     // i.e. passing in a date of 1/1/2013 will give a range of 2009 to 2020
     // Truncate the last digit from the current year and subtract 1 to get the start of the decade
-    const startDecade = (Math.trunc(startYear.year() / 10) * 10) ;
+    const startDecade = (Math.trunc(startYear.year() / 10) * 10);
 
     const startDate = moment.utc(`${startDecade}-01-01`).startOf('year');
 
@@ -198,6 +203,24 @@ export class DlDateTimePickerComponent implements OnInit, ControlValueAccessor {
   @HostListener('keydown', ['$event'])
   private _handleKeyDown($event: KeyboardEvent): void {
     switch ($event.keyCode) {
+      case ENTER:
+        this._onDateClick(this._model.activeDate);
+        return;
+      case PAGE_UP:
+        const pageUpYear = moment.utc(this._model.activeDate).subtract(10, 'year').valueOf();
+        this._model = this.yearModel(pageUpYear);
+        break;
+      case PAGE_DOWN:
+        const pageDownYear = moment.utc(this._model.activeDate).add(10, 'year').valueOf();
+        this._model = this.yearModel(pageDownYear);
+        break;
+      case END:
+        const cells = this._model.rows[this._model.rows.length - 1].cells;
+        this._model = this.yearModel(cells[cells.length - 1].value);
+        break;
+      case HOME:
+        this._model = this.yearModel(this._model.rows[0].cells[0].value);
+        break;
       case LEFT_ARROW:
         const leftYear = moment.utc(this._model.activeDate).subtract(1, 'year').valueOf();
         this._model = this.yearModel(leftYear);

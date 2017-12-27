@@ -3,9 +3,20 @@ import {Component, DebugElement, ViewChild} from '@angular/core';
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {By} from '@angular/platform-browser';
 import {FormsModule} from '@angular/forms';
-import {dispatchFakeEvent, dispatchKeyboardEvent, DOWN_ARROW, LEFT_ARROW, RIGHT_ARROW, UP_ARROW} from '../../../../testing/dispatch-events';
+import {
+  dispatchFakeEvent,
+  dispatchKeyboardEvent,
+  DOWN_ARROW, END, ENTER,
+  HOME,
+  LEFT_ARROW,
+  PAGE_DOWN,
+  PAGE_UP,
+  RIGHT_ARROW,
+  UP_ARROW
+} from '../../../../testing/dispatch-events';
 
 @Component({
+
   template: '<dl-date-time-picker [(ngModel)]="selectedDate" startView="year"></dl-date-time-picker>'
 })
 class StartViewYearComponent {
@@ -157,6 +168,22 @@ describe('DlDateTimePickerComponent', () => {
       expect(yearView).toBeFalsy();
     });
 
+    it('should change to .month-view when hitting enter', () => {
+      (component.picker as any)._model.activeDate = new Date('2011-01-01').getTime();
+      fixture.detectChanges();
+
+      const activeElement = fixture.debugElement.query(By.css('.active'));
+
+      dispatchKeyboardEvent(activeElement.nativeElement, 'keydown', ENTER);
+      fixture.detectChanges();
+
+      const monthView = fixture.debugElement.query(By.css('.month-view'));
+      expect(monthView).toBeTruthy();
+
+      const yearView = fixture.debugElement.query(By.css('.year-view'));
+      expect(yearView).toBeFalsy();
+    });
+
     it('should have one .active element', () => {
       const activeElements = fixture.debugElement.queryAll(By.css('.active'));
       expect(activeElements.length).toBe(1);
@@ -246,7 +273,6 @@ describe('DlDateTimePickerComponent', () => {
       expect(viewLabel.nativeElement.textContent).toBe('2000-2009');
     });
 
-
     it('should change .active element on down arrow', () => {
       (component.picker as any)._model.activeDate = new Date('2014-01-01').getTime();
       fixture.detectChanges();
@@ -263,6 +289,73 @@ describe('DlDateTimePickerComponent', () => {
       const newActiveElement = fixture.debugElement.query(By.css('.active'));
       expect(newActiveElement.nativeElement.textContent).toBe('2019');
     });
+
+    it('should change .active element on page-up (fn+up-arrow)', () => {
+      (component.picker as any)._model.activeDate = new Date('2016-01-01').getTime();
+      fixture.detectChanges();
+
+      const activeElement = fixture.debugElement.query(By.css('.active'));
+      expect(activeElement.nativeElement.textContent).toBe('2016');
+
+      dispatchFakeEvent(activeElement.nativeElement, 'focus');
+      fixture.detectChanges();
+
+      dispatchKeyboardEvent(activeElement.nativeElement, 'keydown', PAGE_UP);
+      fixture.detectChanges();
+
+      const newActiveElement = fixture.debugElement.query(By.css('.active'));
+      expect(newActiveElement.nativeElement.textContent).toBe('2006');
+    });
+
+
+    it('should change .active element on page-down (fn+down-arrow)', () => {
+      (component.picker as any)._model.activeDate = new Date('2016-01-01').getTime();
+      fixture.detectChanges();
+
+      const activeElement = fixture.debugElement.query(By.css('.active'));
+      expect(activeElement.nativeElement.textContent).toBe('2016');
+
+      dispatchFakeEvent(activeElement.nativeElement, 'focus');
+      fixture.detectChanges();
+
+      dispatchKeyboardEvent(activeElement.nativeElement, 'keydown', PAGE_DOWN);
+      fixture.detectChanges();
+
+      const newActiveElement = fixture.debugElement.query(By.css('.active'));
+      expect(newActiveElement.nativeElement.textContent).toBe('2026');
+    });
+
+    it('should change .active element to first .year on HOME', () => {
+      (component.picker as any)._model.activeDate = new Date('2016-01-01').getTime();
+      fixture.detectChanges();
+
+      const activeElement = fixture.debugElement.query(By.css('.active'));
+      expect(activeElement.nativeElement.textContent).toBe('2016');
+
+      dispatchFakeEvent(activeElement.nativeElement, 'focus');
+      fixture.detectChanges();
+
+      dispatchKeyboardEvent(activeElement.nativeElement, 'keydown', HOME);
+      fixture.detectChanges();
+
+      const newActiveElement = fixture.debugElement.query(By.css('.active'));
+      expect(newActiveElement.nativeElement.textContent).toBe('2010');
+    });
+
+    it('should change .active element to first .year on END', () => {
+      const activeElement = fixture.debugElement.query(By.css('.active'));
+      expect(activeElement.nativeElement.textContent).toBe('2017');
+
+      dispatchFakeEvent(activeElement.nativeElement, 'focus');
+      fixture.detectChanges();
+
+      dispatchKeyboardEvent(activeElement.nativeElement, 'keydown', END);
+      fixture.detectChanges();
+
+      const newActiveElement = fixture.debugElement.query(By.css('.active'));
+      expect(newActiveElement.nativeElement.textContent).toBe('2019');
+    });
+
 
   });
 
@@ -365,12 +458,30 @@ describe('DlDateTimePickerComponent', () => {
       expect(changeSpy.calls.first().args[0].utc).toBe(1514764800000);
     });
 
-    it('should store the value in ngModel when clicking a .year',  () => {
+    it('should store the value in ngModel when clicking a .year', () => {
       const yearElements = fixture.debugElement.queryAll(By.css('.year'));
       yearElements[9].nativeElement.click(); // 2019-01-01
       fixture.detectChanges();
 
       expect(component.selectedDate).toBe(1546300800000);
+    });
+
+    it('should store the value in ngModel when hitting enter', () => {
+      const changeSpy = jasmine.createSpy('change listener');
+      component.picker.change.subscribe(changeSpy);
+
+      (component.picker as any)._model.activeDate = new Date('2011-01-01').getTime();
+      fixture.detectChanges();
+
+      const activeElement = fixture.debugElement.query(By.css('.active'));
+
+      dispatchKeyboardEvent(activeElement.nativeElement, 'keydown', ENTER);
+      fixture.detectChanges();
+
+      expect(component.picker.value).toBe(1293840000000);
+      expect(changeSpy).toHaveBeenCalled();
+      expect(changeSpy.calls.first().args[0].utc).toBe(1293840000000);
+      expect(component.selectedDate).toBe(1293840000000);
     });
   });
 
