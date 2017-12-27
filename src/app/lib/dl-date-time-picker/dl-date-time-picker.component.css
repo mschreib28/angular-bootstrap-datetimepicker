@@ -18,7 +18,7 @@
 }
 
 
-.active,
+.active:focus,
 .date-button:focus,
 .date-button:hover,
 .left-button:focus,
