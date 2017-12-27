@@ -31,10 +31,10 @@ export function createFakeEvent(type: string, canBubble = true, cancelable = tru
 
 /** Dispatches a keydown event from an element. */
 export function createKeyboardEvent(type: string, keyCode: number, target?: Element, key?: string) {
-  let event = document.createEvent('KeyboardEvent') as any;
+  const event = document.createEvent('KeyboardEvent') as any;
   // Firefox does not support `initKeyboardEvent`, but supports `initKeyEvent`.
-  let initEventFn = (event.initKeyEvent || event.initKeyboardEvent).bind(event);
-  let originalPreventDefault = event.preventDefault;
+  const initEventFn = (event.initKeyEvent || event.initKeyboardEvent).bind(event);
+  const originalPreventDefault = event.preventDefault;
 
   initEventFn(type, true, true, window, 0, 0, 0, 0, 0, keyCode);
 

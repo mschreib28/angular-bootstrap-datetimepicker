@@ -244,7 +244,7 @@ describe('DlDateTimePickerComponent', () => {
 
       const viewLabel = fixture.debugElement.query(By.css('.view-label'));
       expect(viewLabel.nativeElement.textContent).toBe('2000-2009');
-    })
+    });
 
 
     it('should change .active element on down arrow', () => {

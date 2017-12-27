@@ -236,23 +236,23 @@ export class DlDateTimePickerComponent implements OnInit, ControlValueAccessor {
 
 interface DlDateTimePickerModel {
   view: string;
-  viewLabel: string
-  activeDate: number
+  viewLabel: string;
+  activeDate: number;
   leftButton: {
-    value: number,
-    classes: {},
-    iconClasses: {}
+    value: number;
+    classes: {};
+    iconClasses: {};
   };
   rightButton: {
-    value: number,
-    classes: {},
-    iconClasses: {}
+    value: number;
+    classes: {};
+    iconClasses: {};
   };
   rows: Array<{
     cells: Array<{
-      display: string,
-      value: number,
-      classes: {}
+      display: string;
+      value: number;
+      classes: {};
     }>
   }>;
 }
