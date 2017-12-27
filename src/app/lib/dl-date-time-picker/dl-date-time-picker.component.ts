@@ -205,6 +205,8 @@ export class DlDateTimePickerComponent implements OnInit, ControlValueAccessor {
     switch ($event.keyCode) {
       case ENTER:
         this._onDateClick(this._model.activeDate);
+        // Prevent unexpected default actions such as form submission.
+        event.preventDefault();
         return;
       case PAGE_UP:
         const pageUpYear = moment.utc(this._model.activeDate).subtract(10, 'year').valueOf();

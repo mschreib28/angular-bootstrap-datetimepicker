@@ -168,6 +168,19 @@ describe('DlDateTimePickerComponent', () => {
       expect(yearView).toBeFalsy();
     });
 
+    it('should do nothing when hitting non-supported key', () => {
+      (component.picker as any)._model.activeDate = new Date('2011-01-01').getTime();
+      fixture.detectChanges();
+
+      const activeElement = fixture.debugElement.query(By.css('.active'));
+      expect(activeElement.nativeElement.textContent).toBe('2011');
+
+      dispatchKeyboardEvent(activeElement.nativeElement, 'keydown', 65); // A
+      fixture.detectChanges();
+
+      expect(activeElement.nativeElement.textContent).toBe('2011');
+    });
+
     it('should change to .month-view when hitting enter', () => {
       (component.picker as any)._model.activeDate = new Date('2011-01-01').getTime();
       fixture.detectChanges();

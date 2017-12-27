@@ -17,8 +17,8 @@ export function dispatchEvent(node: Node | Window, event: Event): Event {
 }
 
 /** Shorthand to dispatch a fake event on a specified node. */
-export function dispatchFakeEvent(node: Node | Window, type: string, canBubble?: boolean): Event {
-  return dispatchEvent(node, createFakeEvent(type, canBubble));
+export function dispatchFakeEvent(node: Node | Window, type: string): Event {
+  return dispatchEvent(node, createFakeEvent(type));
 }
 
 /** Shorthand to dispatch a keyboard event with a specified key code. */
@@ -28,9 +28,9 @@ export function dispatchKeyboardEvent(node: Node, type: string, keyCode: number,
 
 
 /** Creates a fake event object with any desired event type. */
-export function createFakeEvent(type: string, canBubble = true, cancelable = true) {
+export function createFakeEvent(type: string) {
   const event = document.createEvent('Event');
-  event.initEvent(type, canBubble, cancelable);
+  event.initEvent(type, true, true);
   return event;
 }
 
@@ -39,7 +39,6 @@ export function createKeyboardEvent(type: string, keyCode: number, target?: Elem
   const event = document.createEvent('KeyboardEvent') as any;
   // Firefox does not support `initKeyboardEvent`, but supports `initKeyEvent`.
   const initEventFn = (event.initKeyEvent || event.initKeyboardEvent).bind(event);
-  const originalPreventDefault = event.preventDefault;
 
   initEventFn(type, true, true, window, 0, 0, 0, 0, 0, keyCode);
 
@@ -47,15 +46,7 @@ export function createKeyboardEvent(type: string, keyCode: number, target?: Elem
   // See related bug https://bugs.webkit.org/show_bug.cgi?id=16735
   Object.defineProperties(event, {
     keyCode: {get: () => keyCode},
-    key: {get: () => key},
-    target: {get: () => target}
   });
-
-  // IE won't set `defaultPrevented` on synthetic events so we need to do it manually.
-  event.preventDefault = function () {
-    Object.defineProperty(event, 'defaultPrevented', {get: () => true});
-    return originalPreventDefault.apply(this, arguments);
-  };
 
   return event;
 }
