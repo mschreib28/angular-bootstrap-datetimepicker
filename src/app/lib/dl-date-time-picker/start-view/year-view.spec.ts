@@ -6,12 +6,14 @@ import {FormsModule} from '@angular/forms';
 import {
   dispatchFakeEvent,
   dispatchKeyboardEvent,
-  DOWN_ARROW, END, ENTER,
+  DOWN_ARROW,
+  END,
+  ENTER,
   HOME,
   LEFT_ARROW,
   PAGE_DOWN,
   PAGE_UP,
-  RIGHT_ARROW,
+  RIGHT_ARROW, SPACE,
   UP_ARROW
 } from '../../../../testing/dispatch-events';
 
@@ -369,7 +371,65 @@ describe('DlDateTimePickerComponent', () => {
       expect(newActiveElement.nativeElement.textContent).toBe('2019');
     });
 
+    xit('should switch to previous decade value after hitting ENTER on .left-button', () => {
+      const leftButton = fixture.debugElement.query(By.css('.left-button'));
+      dispatchFakeEvent(leftButton.nativeElement, 'focus');
+      fixture.detectChanges();
 
+      dispatchKeyboardEvent(leftButton.nativeElement, 'keydown', ENTER);
+      fixture.detectChanges();
+
+      const viewLabel = fixture.debugElement.query(By.css('.view-label'));
+      expect(viewLabel.nativeElement.textContent).toBe('2000-2009');
+
+      const yearElements = fixture.debugElement.queryAll(By.css('.year'));
+      expect(yearElements[0].nativeElement.textContent.trim()).toBe('2000');
+    });
+
+    xit('should switch to previous decade value after hitting SPACE on .left-button', () => {
+      const leftButton = fixture.debugElement.query(By.css('.left-button'));
+      dispatchFakeEvent(leftButton.nativeElement, 'focus');
+      fixture.detectChanges();
+
+      dispatchKeyboardEvent(leftButton.nativeElement, 'keydown', SPACE);
+      fixture.detectChanges();
+
+      const viewLabel = fixture.debugElement.query(By.css('.view-label'));
+      expect(viewLabel.nativeElement.textContent).toBe('2000-2009');
+
+      const yearElements = fixture.debugElement.queryAll(By.css('.year'));
+      expect(yearElements[0].nativeElement.textContent.trim()).toBe('2000');
+    });
+
+    xit('should switch to previous decade value after hitting ENTER on .right-button', () => {
+      const rightButton = fixture.debugElement.query(By.css('.right-button'));
+      dispatchFakeEvent(rightButton.nativeElement, 'focus');
+      fixture.detectChanges();
+
+      dispatchKeyboardEvent(rightButton.nativeElement, 'keydown', ENTER);
+      fixture.detectChanges();
+
+      const viewLabel = fixture.debugElement.query(By.css('.view-label'));
+      expect(viewLabel.nativeElement.textContent).toBe('2000-2009');
+
+      const yearElements = fixture.debugElement.queryAll(By.css('.year'));
+      expect(yearElements[0].nativeElement.textContent.trim()).toBe('2000');
+    });
+
+    xit('should switch to previous decade value after hitting SPACE on .right-button', () => {
+      const rightButton = fixture.debugElement.query(By.css('.right-button'));
+      dispatchFakeEvent(rightButton.nativeElement, 'focus');
+      fixture.detectChanges();
+
+      dispatchKeyboardEvent(rightButton.nativeElement, 'keydown', SPACE);
+      fixture.detectChanges();
+
+      const viewLabel = fixture.debugElement.query(By.css('.view-label'));
+      expect(viewLabel.nativeElement.textContent).toBe('2020-2029');
+
+      const yearElements = fixture.debugElement.queryAll(By.css('.year'));
+      expect(yearElements[9].nativeElement.textContent.trim()).toBe('2029');
+    });
   });
 
   describe('year selector (minView=year)', () => {
@@ -497,26 +557,6 @@ describe('DlDateTimePickerComponent', () => {
       expect(component.selectedDate).toBe(1293840000000);
     });
   });
-
-  // tab key  - cycles between left, up, right, and active date in calendar
-
-  // enter
-  // on left, up, or right = click()
-
-  // arrow key
-  // on left, up, or right does nothing
-
-  // page_up/down
-
-  // up/down arrow moves up/down one row (same cell index)
-
-  // fn + up/down arrow = left/right button click
-  // fn + left/right arrow moves to the first/last date in calendar
-
-
-  // home
-
-  // end
 
   // Other screen reader issues - search for usability issues
 });

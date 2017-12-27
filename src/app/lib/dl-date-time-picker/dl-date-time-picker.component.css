@@ -17,6 +17,11 @@
   outline: 0;
 }
 
+.left-button,
+.right-button,
+.date-button {
+  border-width: 0;
+}
 
 .active:focus,
 .date-button:focus,
