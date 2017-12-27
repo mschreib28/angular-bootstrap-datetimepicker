@@ -3,7 +3,7 @@ import {Component, DebugElement, ViewChild} from '@angular/core';
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {By} from '@angular/platform-browser';
 import {FormsModule} from '@angular/forms';
-import * as moment from 'moment';
+import {dispatchFakeEvent, dispatchKeyboardEvent, DOWN_ARROW, LEFT_ARROW, RIGHT_ARROW, UP_ARROW} from '../../../../testing/dispatch-events';
 
 @Component({
   template: '<dl-date-time-picker [(ngModel)]="selectedDate" startView="year"></dl-date-time-picker>'
@@ -58,25 +58,13 @@ describe('DlDateTimePickerComponent', () => {
       expect(viewLabel.nativeElement.textContent).toBe('2010-2019');
     });
 
-    it('should contain 12 .year elements', () => {
+    it('should contain 10 .year elements', () => {
       const yearElements = fixture.debugElement.queryAll(By.css('.year'));
-      expect(yearElements.length).toBe(12);
+      expect(yearElements.length).toBe(10);
     });
 
-    it('should contain 1 .past element', () => {
-      const pastElements = fixture.debugElement.queryAll(By.css('.past'));
-      expect(pastElements.length).toBe(1);
-      expect(pastElements[0].nativeElement.textContent.trim()).toBe('2009');
-    });
-
-    it('should contain 1 .future element', () => {
-      const futureElements = fixture.debugElement.queryAll(By.css('.future'));
-      expect(futureElements.length).toBe(1);
-      expect(futureElements[0].nativeElement.textContent.trim()).toBe('2020');
-    });
-
-    it('should contain 1 .current element for the current year', () => {
-      const currentElements = fixture.debugElement.queryAll(By.css('.current'));
+    it('should contain 1 .today element for the current year', () => {
+      const currentElements = fixture.debugElement.queryAll(By.css('.today'));
       expect(currentElements.length).toBe(1);
       expect(currentElements[0].nativeElement.textContent.trim()).toBe('2017');
       expect(currentElements[0].nativeElement.classList).toContain('1483228800000');
@@ -84,7 +72,6 @@ describe('DlDateTimePickerComponent', () => {
 
     it('should contain 12 .year with start of year utc time as class, aria-label', () => {
       const expectedClass = [
-        1230768000000,
         1262304000000,
         1293840000000,
         1325376000000,
@@ -94,8 +81,7 @@ describe('DlDateTimePickerComponent', () => {
         1451606400000,
         1483228800000,
         1514764800000,
-        1546300800000,
-        1577836800000
+        1546300800000
       ];
 
       const yearElements = fixture.debugElement.queryAll(By.css('.year'));
@@ -109,8 +95,7 @@ describe('DlDateTimePickerComponent', () => {
 
     it('should have a class for previous decade value on .left-button ', () => {
       const leftButton = fixture.debugElement.query(By.css('.left-button'));
-
-      expect(leftButton.classes['946684800000']).toBe(true, leftButton.classes);
+      expect(leftButton.nativeElement.classList).toContain('978307200000');
     });
 
     it('should switch to previous decade value after clicking .left-button', () => {
@@ -121,14 +106,13 @@ describe('DlDateTimePickerComponent', () => {
       const viewLabel = fixture.debugElement.query(By.css('.view-label'));
       expect(viewLabel.nativeElement.textContent).toBe('2000-2009');
 
-      const pastElements = fixture.debugElement.queryAll(By.css('.past'));
-      expect(pastElements.length).toBe(1);
-      expect(pastElements[0].nativeElement.textContent.trim()).toBe('1999');
+      const yearElements = fixture.debugElement.queryAll(By.css('.year'));
+      expect(yearElements[0].nativeElement.textContent.trim()).toBe('2000');
     });
 
     it('should has a class for previous decade on .right-button ', () => {
       const rightButton = fixture.debugElement.query(By.css('.right-button')).nativeElement;
-      expect(rightButton.classList).toContain('1577836800000');
+      expect(rightButton.classList).toContain('1609459200000');
     });
 
     it('should switch to next decade after clicking .right-button', () => {
@@ -136,9 +120,8 @@ describe('DlDateTimePickerComponent', () => {
       rightButton.nativeElement.click();
       fixture.detectChanges();
 
-      const pastElements = fixture.debugElement.queryAll(By.css('.past'));
-      expect(pastElements.length).toBe(1);
-      expect(pastElements[0].nativeElement.textContent.trim()).toBe('2019');
+      const yearElements = fixture.debugElement.queryAll(By.css('.year'));
+      expect(yearElements[0].nativeElement.textContent.trim()).toBe('2020');
     });
 
     it('should .left-button should contain screen reader text', () => {
@@ -156,7 +139,7 @@ describe('DlDateTimePickerComponent', () => {
       component.picker.change.subscribe(changeSpy);
 
       const yearElements = fixture.debugElement.queryAll(By.css('.year'));
-      yearElements[11].nativeElement.click(); // 2020
+      yearElements[9].nativeElement.click(); // 2019
       fixture.detectChanges();
 
       expect(changeSpy).not.toHaveBeenCalled();
@@ -174,7 +157,115 @@ describe('DlDateTimePickerComponent', () => {
       expect(yearView).toBeFalsy();
     });
 
+    it('should have one .active element', () => {
+      const activeElements = fixture.debugElement.queryAll(By.css('.active'));
+      expect(activeElements.length).toBe(1);
+    });
+
+    it('should change .active element on right arrow', () => {
+      const activeElement = fixture.debugElement.query(By.css('.active'));
+      expect(activeElement.nativeElement.textContent).toBe('2017');
+
+      dispatchFakeEvent(activeElement.nativeElement, 'focus');
+      fixture.detectChanges();
+
+      dispatchKeyboardEvent(activeElement.nativeElement, 'keydown', RIGHT_ARROW);
+      fixture.detectChanges();
+
+      const newActiveElement = fixture.debugElement.query(By.css('.active'));
+      expect(newActiveElement.nativeElement.textContent).toBe('2018');
+    });
+
+    it('should change to next decade when last .year is .active element and pressing on right arrow', () => {
+      (component.picker as any)._model.activeDate = new Date('2019-01-01').getTime();
+      fixture.detectChanges();
+
+      dispatchKeyboardEvent(fixture.debugElement.query(By.css('.active')).nativeElement, 'keydown', RIGHT_ARROW); // 2019
+      fixture.detectChanges();
+
+      const activeElement = fixture.debugElement.query(By.css('.active'));
+      expect(activeElement.nativeElement.textContent).toBe('2020');
+
+      const viewLabel = fixture.debugElement.query(By.css('.view-label'));
+      expect(viewLabel.nativeElement.textContent).toBe('2020-2029');
+    });
+
+    it('should change .active element on left arrow', () => {
+      const activeElement = fixture.debugElement.query(By.css('.active'));
+      expect(activeElement.nativeElement.textContent).toBe('2017');
+
+      dispatchFakeEvent(activeElement.nativeElement, 'focus');
+      fixture.detectChanges();
+
+      dispatchKeyboardEvent(activeElement.nativeElement, 'keydown', LEFT_ARROW);
+      fixture.detectChanges();
+
+      const newActiveElement = fixture.debugElement.query(By.css('.active'));
+      expect(newActiveElement.nativeElement.textContent).toBe('2016');
+    });
+
+    it('should change to previous decade when first .year is .active element and pressing on left arrow', () => {
+      (component.picker as any)._model.activeDate = new Date('2010-01-01').getTime();
+      fixture.detectChanges();
+
+      dispatchKeyboardEvent(fixture.debugElement.query(By.css('.active')).nativeElement, 'keydown', LEFT_ARROW); // 2019
+      fixture.detectChanges();
+
+      const activeElement = fixture.debugElement.query(By.css('.active'));
+      expect(activeElement.nativeElement.textContent).toBe('2009');
+
+      const viewLabel = fixture.debugElement.query(By.css('.view-label'));
+      expect(viewLabel.nativeElement.textContent).toBe('2000-2009');
+    });
+
+    it('should change .active element on up arrow', () => {
+      const activeElement = fixture.debugElement.query(By.css('.active'));
+      expect(activeElement.nativeElement.textContent).toBe('2017');
+
+      dispatchFakeEvent(activeElement.nativeElement, 'focus');
+      fixture.detectChanges();
+
+      dispatchKeyboardEvent(activeElement.nativeElement, 'keydown', UP_ARROW);
+      fixture.detectChanges();
+
+      const newActiveElement = fixture.debugElement.query(By.css('.active'));
+      expect(newActiveElement.nativeElement.textContent).toBe('2012');
+    });
+
+    it('should change to previous decade when first .year is .active element and pressing on up arrow', () => {
+      (component.picker as any)._model.activeDate = new Date('2014-01-01').getTime();
+      fixture.detectChanges();
+
+      dispatchKeyboardEvent(fixture.debugElement.query(By.css('.active')).nativeElement, 'keydown', UP_ARROW); // 2019
+      fixture.detectChanges();
+
+      const activeElement = fixture.debugElement.query(By.css('.active'));
+      expect(activeElement.nativeElement.textContent).toBe('2009');
+
+      const viewLabel = fixture.debugElement.query(By.css('.view-label'));
+      expect(viewLabel.nativeElement.textContent).toBe('2000-2009');
+    })
+
+
+    it('should change .active element on down arrow', () => {
+      (component.picker as any)._model.activeDate = new Date('2014-01-01').getTime();
+      fixture.detectChanges();
+
+      const activeElement = fixture.debugElement.query(By.css('.active'));
+      expect(activeElement.nativeElement.textContent).toBe('2014');
+
+      dispatchFakeEvent(activeElement.nativeElement, 'focus');
+      fixture.detectChanges();
+
+      dispatchKeyboardEvent(activeElement.nativeElement, 'keydown', DOWN_ARROW);
+      fixture.detectChanges();
+
+      const newActiveElement = fixture.debugElement.query(By.css('.active'));
+      expect(newActiveElement.nativeElement.textContent).toBe('2019');
+    });
+
   });
+
   describe('year selector (minView=year)', () => {
     let component: YearSelectorComponent;
     let fixture: ComponentFixture<YearSelectorComponent>;
@@ -245,7 +336,7 @@ describe('DlDateTimePickerComponent', () => {
       fixture.detectChanges();
 
       expect(changeSpy).toHaveBeenCalled();
-      expect(changeSpy.calls.first().args[0].utc).toBe(1230768000000);
+      expect(changeSpy.calls.first().args[0].utc).toBe(1262304000000);
     });
 
     it('should store the value when clicking a .year', function () {
@@ -256,9 +347,9 @@ describe('DlDateTimePickerComponent', () => {
       yearElements[0].nativeElement.click();
       fixture.detectChanges();
 
-      expect(component.picker.value).toBe(1230768000000);
+      expect(component.picker.value).toBe(1262304000000);
       expect(changeSpy).toHaveBeenCalled();
-      expect(changeSpy.calls.first().args[0].utc).toBe(1230768000000);
+      expect(changeSpy.calls.first().args[0].utc).toBe(1262304000000);
     });
 
     it('should store the value when clicking a .year', function () {
@@ -266,7 +357,7 @@ describe('DlDateTimePickerComponent', () => {
       component.picker.change.subscribe(changeSpy);
 
       const yearElements = fixture.debugElement.queryAll(By.css('.year'));
-      yearElements[9].nativeElement.click();
+      yearElements[8].nativeElement.click(); //
       fixture.detectChanges();
 
       expect(component.picker.value).toBe(1514764800000);
@@ -274,9 +365,9 @@ describe('DlDateTimePickerComponent', () => {
       expect(changeSpy.calls.first().args[0].utc).toBe(1514764800000);
     });
 
-    it('should store the value in ngModel when clicking a .year', function () {
+    it('should store the value in ngModel when clicking a .year',  () => {
       const yearElements = fixture.debugElement.queryAll(By.css('.year'));
-      yearElements[10].nativeElement.click(); // 2019-01-01
+      yearElements[9].nativeElement.click(); // 2019-01-01
       fixture.detectChanges();
 
       expect(component.selectedDate).toBe(1546300800000);

@@ -6,6 +6,7 @@
   font-weight: bold;
 }
 
+.view-label,
 .left-button,
 .right-button,
 .date-button {
@@ -13,11 +14,18 @@
   border-radius: 999px;
   cursor: pointer;
   color: hsla(0, 0%, 0%, 0.87);
+  outline: 0;
 }
 
+
+.active,
+.date-button:focus,
+.date-button:hover,
+.left-button:focus,
 .left-button:hover,
+.right-button:focus,
 .right-button:hover,
-.date-button:hover {
+.view-label:focus {
   background: hsla(0, 0%, 0%, 0.04);
 }
 
@@ -26,10 +34,10 @@
   color: #999;
 }
 
-.current,
-.current:hover,
-.current.disabled,
-.current.disabled:hover {
+.today,
+.today:hover,
+.today.disabled,
+.today.disabled:hover {
   border-width: 1px;
   border-style: solid;
   border-radius: 999px;

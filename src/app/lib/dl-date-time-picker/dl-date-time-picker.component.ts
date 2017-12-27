@@ -1,6 +1,12 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, ElementRef, EventEmitter, HostListener, Input, NgZone, OnInit, Output} from '@angular/core';
 import * as moment from 'moment';
 import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
+import {take} from 'rxjs/operators';
+
+const UP_ARROW = 38;
+const DOWN_ARROW = 40;
+const RIGHT_ARROW = 39;
+const LEFT_ARROW = 37;
 
 
 class DlDateTimePickerChange {
@@ -55,30 +61,36 @@ export class DlDateTimePickerComponent implements OnInit, ControlValueAccessor {
   private _touched: (() => void)[] = [];
   private _value: number;
 
+  constructor(private _elementRef: ElementRef,
+              private _ngZone: NgZone) {
+
+  }
+
   ngOnInit(): void {
     this._model = this.yearModel(new Date().getTime());
   }
 
   private yearModel(milliseconds: number): DlDateTimePickerModel {
-    const rowNumbers = [0, 1, 2];
-    const yearNumbers = [0, 1, 2, 3];
+    const rowNumbers = [0, 1];
+    const yearNumbers = [0, 1, 2, 3, 4];
 
     const startYear = moment.utc(milliseconds).startOf('year');
 
     // View starts one year before the decade starts and ends one year after the decade ends
     // i.e. passing in a date of 1/1/2013 will give a range of 2009 to 2020
     // Truncate the last digit from the current year and subtract 1 to get the start of the decade
-    const startDecade = (Math.trunc(startYear.year() / 10) * 10) - 1;
+    const startDecade = (Math.trunc(startYear.year() / 10) * 10) ;
 
     const startDate = moment.utc(`${startDecade}-01-01`).startOf('year');
 
     // future and past years range is inclusive of start year decade.
-    const futureYear = startDate.year() + 10;
-    const pastYear = startDate.year() + 1;
+    const futureYear = startDate.year() + 9;
+    const pastYear = startDate.year();
 
     const result: DlDateTimePickerModel = {
       view: 'year',
       viewLabel: `${pastYear}-${futureYear}`,
+      activeDate: startYear.valueOf(),
       leftButton: {
         value: moment.utc(startDate).subtract(9, 'years').valueOf(),
         classes: {},
@@ -89,7 +101,7 @@ export class DlDateTimePickerComponent implements OnInit, ControlValueAccessor {
         classes: {},
         iconClasses: this.rightIconClass
       },
-      rows: rowNumbers.map(rowOfYears)
+      rows: rowNumbers.map(rowOfYears.bind(this))
     };
 
     result.leftButton.classes[`${result.leftButton.value}`] = true;
@@ -106,9 +118,7 @@ export class DlDateTimePickerComponent implements OnInit, ControlValueAccessor {
           'display': yearMoment.format('YYYY'),
           'value': yearMoment.valueOf(),
           'classes': {
-            'current': yearMoment.isSame(currentMoment, 'year'),
-            'future': yearMoment.year() > futureYear,
-            'past': yearMoment.year() < pastYear,
+            'today': yearMoment.isSame(currentMoment, 'year'),
           }
         };
       });
@@ -120,6 +130,7 @@ export class DlDateTimePickerComponent implements OnInit, ControlValueAccessor {
     return {
       view: 'month',
       viewLabel: 'month-view',
+      activeDate: milliseconds,
       leftButton: {
         value: 0,
         classes: {},
@@ -178,11 +189,55 @@ export class DlDateTimePickerComponent implements OnInit, ControlValueAccessor {
   private _onTouch() {
     this._touched.forEach((onTouch) => onTouch());
   }
+
+  _isActiveCell(value: number) {
+    return this._model.activeDate === value;
+  }
+
+  /** Handles keydown events on the calendar body when calendar is in year view. */
+  @HostListener('keydown', ['$event'])
+  private _handleKeyDown($event: KeyboardEvent): void {
+    switch ($event.keyCode) {
+      case LEFT_ARROW:
+        const leftYear = moment.utc(this._model.activeDate).subtract(1, 'year').valueOf();
+        this._model = this.yearModel(leftYear);
+        break;
+      case RIGHT_ARROW:
+        const rightYear = moment.utc(this._model.activeDate).add(1, 'year').valueOf();
+        this._model = this.yearModel(rightYear);
+        break;
+      case UP_ARROW:
+        const upYear = moment.utc(this._model.activeDate).subtract(5, 'year').valueOf();
+        this._model = this.yearModel(upYear);
+        break;
+      case DOWN_ARROW:
+        const downYear = moment.utc(this._model.activeDate).add(5, 'year').valueOf();
+        this._model = this.yearModel(downYear);
+        break;
+      default:
+        // Don't prevent default or focus active cell on keys that we don't explicitly handle.
+        return;
+    }
+
+    this._focusActiveCell();
+    // Prevent unexpected default actions such as form submission.
+    event.preventDefault();
+  }
+
+  /** Focuses the active cell after the microtask queue is empty. */
+  private _focusActiveCell() {
+    this._ngZone.runOutsideAngular(() => {
+      this._ngZone.onStable.asObservable().pipe(take(1)).subscribe(() => {
+        this._elementRef.nativeElement.querySelector('.active').focus();
+      });
+    });
+  }
 }
 
 interface DlDateTimePickerModel {
   view: string;
-  viewLabel: string;
+  viewLabel: string
+  activeDate: number
   leftButton: {
     value: number,
     classes: {},

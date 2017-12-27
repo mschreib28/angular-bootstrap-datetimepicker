@@ -1,13 +1,15 @@
 <div class="text-center {{_model.view}}-view ">
   <div class="row align-items-center no-gutters">
     <div class="col left-button"
+         tabindex="0"
          [ngClass]="_model.leftButton.classes"
          (click)="_onLeftClick()">
       <span [ngClass]="_model.leftButton.iconClasses"></span>
       <span class="sr-only">Previous decade</span>
     </div>
-    <div class="col view-label">{{_model.viewLabel}}</div>
+    <div tabindex="0" class="col view-label">{{_model.viewLabel}}</div>
     <div class="col right-button"
+         tabindex="0"
          (click)="_onRightClick()"
          [ngClass]="_model.rightButton.classes">
       <span [ngClass]="_model.rightButton.iconClasses"></span>
@@ -18,8 +20,10 @@
     <div *ngFor="let cell of row.cells"
          role="gridcell"
          class="col date-button {{_model.view}} {{cell.value}}"
+         [class.active]="_isActiveCell(cell.value)"
          [ngClass]="cell.classes"
          [attr.aria-label]="cell.ariaLabel"
+         [attr.tabindex]="_isActiveCell(cell.value) ? 0 : -1"
          (click)="_onDateClick(cell.value)"
     >{{cell.display}}</div>
   </div>
