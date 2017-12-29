@@ -1,19 +1,21 @@
 <div class="text-center {{_model.view}}-view ">
   <div class="row align-items-center no-gutters">
     <button class="col left-button"
-         tabindex="0"
-         [ngClass]="_model.leftButton.classes"
-         (click)="_onLeftClick()">
+            [attr.aria-label]="_model.leftButton.ariaLabel"
+            [attr.title]="_model.leftButton.ariaLabel"
+            [ngClass]="_model.leftButton.classes"
+            (click)="_onLeftClick()">
       <span [ngClass]="_model.leftButton.iconClasses"></span>
-      <span class="sr-only">Previous decade</span>
     </button>
-    <div class="col view-label">{{_model.viewLabel}}</div>
+
+    <div *ngIf="_model.view === 'year'; then yearViewLabel else defaultViewLabel;"></div>
+
     <button class="col right-button"
-         tabindex="0"
-         (click)="_onRightClick()"
-         [ngClass]="_model.rightButton.classes">
+            [attr.aria-label]="_model.rightButton.ariaLabel"
+            [attr.title]="_model.rightButton.ariaLabel"
+            (click)="_onRightClick()"
+            [ngClass]="_model.rightButton.classes">
       <span [ngClass]="_model.rightButton.iconClasses"></span>
-      <span class="sr-only">Next decade</span>
     </button>
   </div>
   <div *ngFor="let row of _model.rows" class="row align-items-center no-gutters">
@@ -28,3 +30,14 @@
     >{{cell.display}}</div>
   </div>
 </div>
+
+<ng-template #yearViewLabel><div class="col view-label">{{_model.viewLabel}}</div></ng-template>
+<ng-template #defaultViewLabel>
+  <button class="col view-label up-button"
+    [attr.aria-label]="_model.upButton.ariaLabel"
+    [attr.title]="_model.upButton.ariaLabel"
+    (click)="_onUpClick()"
+    [ngClass]="_model.upButton.classes"
+  >{{_model.viewLabel}}&nbsp;<span [ngClass]="_model.upButton.iconClasses"></span>
+  </button>
+</ng-template>

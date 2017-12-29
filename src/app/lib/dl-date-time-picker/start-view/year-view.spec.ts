@@ -4,30 +4,20 @@ import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {By} from '@angular/platform-browser';
 import {FormsModule} from '@angular/forms';
 import {
-  dispatchFakeEvent,
-  dispatchKeyboardEvent,
-  DOWN_ARROW,
-  END,
-  ENTER,
-  HOME,
-  LEFT_ARROW,
-  PAGE_DOWN,
-  PAGE_UP,
-  RIGHT_ARROW, SPACE,
+  dispatchFakeEvent, dispatchKeyboardEvent, DOWN_ARROW, END, ENTER, HOME, LEFT_ARROW, PAGE_DOWN, PAGE_UP, RIGHT_ARROW, SPACE,
   UP_ARROW
 } from '../../../../testing/dispatch-events';
 
 @Component({
 
-  template: '<dl-date-time-picker [(ngModel)]="selectedDate" startView="year"></dl-date-time-picker>'
+  template: '<dl-date-time-picker startView="year"></dl-date-time-picker>'
 })
 class StartViewYearComponent {
-  selectedDate: number;
   @ViewChild(DlDateTimePickerComponent) picker: DlDateTimePickerComponent;
 }
 
 @Component({
-  template: '<dl-date-time-picker [(ngModel)]="selectedDate" startView="year" minView="year" maxView="year"></dl-date-time-picker>'
+  template: '<dl-date-time-picker startView="year" minView="year" maxView="year"></dl-date-time-picker>'
 })
 class YearSelectorComponent {
   selectedDate: number;
@@ -83,7 +73,7 @@ describe('DlDateTimePickerComponent', () => {
       expect(currentElements[0].nativeElement.classList).toContain('1483228800000');
     });
 
-    it('should contain 12 .year with start of year utc time as class, aria-label', () => {
+    it('should contain 10 .year elements with start of year utc time as class and role of gridcell', () => {
       const expectedClass = [
         1262304000000,
         1293840000000,
@@ -103,6 +93,7 @@ describe('DlDateTimePickerComponent', () => {
         const key = expectedClass[index];
         expect(yearElement.nativeElement.classList).toContain(key.toString(10));
         expect(yearElement.attributes['role']).toBe('gridcell', index);
+        expect(yearElement.attributes['aria-label']).toBeNull(); // why isn't this undefined?
       });
     });
 
@@ -137,14 +128,25 @@ describe('DlDateTimePickerComponent', () => {
       expect(yearElements[0].nativeElement.textContent.trim()).toBe('2020');
     });
 
-    it('should .left-button should contain screen reader text', () => {
-      const leftScreenReaderElement = fixture.debugElement.query(By.css('.left-button > .sr-only'));
-      expect(leftScreenReaderElement.nativeElement.textContent.trim()).toBe('Previous decade');
+    it('.left-button should have a title', () => {
+      const leftButton = fixture.debugElement.query(By.css('.left-button'));
+      expect(leftButton.attributes['title']).toBe('Go to 2000-2009');
     });
 
-    it('should .right-button should contain screen reader text', () => {
-      const leftScreenReaderElement = fixture.debugElement.query(By.css('.right-button > .sr-only'));
-      expect(leftScreenReaderElement.nativeElement.textContent.trim()).toBe('Next decade');
+
+    it('.left-button should have arial label', () => {
+      const leftButton = fixture.debugElement.query(By.css('.left-button'));
+      expect(leftButton.attributes['aria-label']).toBe('Go to 2000-2009');
+    });
+
+    it('.right-button should have a title', () => {
+      const rightButton = fixture.debugElement.query(By.css('.right-button'));
+      expect(rightButton.attributes['title']).toBe('Go to 2020-2029');
+    });
+
+    it('.right-button should have aria-label', () => {
+      const rightButton = fixture.debugElement.query(By.css('.right-button'));
+      expect(rightButton.attributes['aria-label']).toBe('Go to 2020-2029');
     });
 
     it('should not emit a change event when clicking .year', () => {
@@ -183,13 +185,29 @@ describe('DlDateTimePickerComponent', () => {
       expect(activeElement.nativeElement.textContent).toBe('2011');
     });
 
-    it('should change to .month-view when hitting enter', () => {
+    it('should change to .month-view when hitting ENTER', () => {
       (component.picker as any)._model.activeDate = new Date('2011-01-01').getTime();
       fixture.detectChanges();
 
       const activeElement = fixture.debugElement.query(By.css('.active'));
 
       dispatchKeyboardEvent(activeElement.nativeElement, 'keydown', ENTER);
+      fixture.detectChanges();
+
+      const monthView = fixture.debugElement.query(By.css('.month-view'));
+      expect(monthView).toBeTruthy();
+
+      const yearView = fixture.debugElement.query(By.css('.year-view'));
+      expect(yearView).toBeFalsy();
+    });
+
+    it('should change to .month-view when hitting SPACE', () => {
+      (component.picker as any)._model.activeDate = new Date('2011-01-01').getTime();
+      fixture.detectChanges();
+
+      const activeElement = fixture.debugElement.query(By.css('.active'));
+
+      dispatchKeyboardEvent(activeElement.nativeElement, 'keydown', SPACE);
       fixture.detectChanges();
 
       const monthView = fixture.debugElement.query(By.css('.month-view'));
@@ -446,53 +464,6 @@ describe('DlDateTimePickerComponent', () => {
       fixture.detectChanges();
     });
 
-    it('should be touched when clicking .left-button', () => {
-      // ng-untouched/ng-touched requires ngModel
-      const pickerElement = fixture.debugElement.query(By.css('dl-date-time-picker')).nativeElement;
-      expect(pickerElement.classList).toContain('ng-untouched');
-
-      const leftButton = fixture.debugElement.query(By.css('.left-button'));
-      leftButton.nativeElement.click();
-      fixture.detectChanges();
-
-      expect(pickerElement.classList).toContain('ng-touched');
-    });
-
-    it('should be touched when clicking .right-button', () => {
-      // ng-untouched/ng-touched requires ngModel
-      const pickerElement = fixture.debugElement.query(By.css('dl-date-time-picker')).nativeElement;
-      expect(pickerElement.classList).toContain('ng-untouched');
-
-      const leftButton = fixture.debugElement.query(By.css('.right-button'));
-      leftButton.nativeElement.click();
-      fixture.detectChanges();
-
-      expect(pickerElement.classList).toContain('ng-touched');
-    });
-
-    it('should be touched when clicking .year', () => {
-      // ng-untouched/ng-touched requires ngModel
-      const pickerElement = fixture.debugElement.query(By.css('dl-date-time-picker')).nativeElement;
-      expect(pickerElement.classList).toContain('ng-untouched');
-
-      const yearElement = fixture.debugElement.query(By.css('.year'));
-      yearElement.nativeElement.click();
-      fixture.detectChanges();
-
-      expect(pickerElement.classList).toContain('ng-touched');
-    });
-
-    it('should be dirty when clicking .year', () => {
-      const pickerElement = fixture.debugElement.query(By.css('dl-date-time-picker')).nativeElement;
-      expect(pickerElement.classList).toContain('ng-untouched');
-
-      const yearElement = fixture.debugElement.query(By.css('.year'));
-      yearElement.nativeElement.click();
-      fixture.detectChanges();
-
-      expect(pickerElement.classList).toContain('ng-dirty');
-    });
-
     it('should emit a change event when clicking a .year', function () {
       const changeSpy = jasmine.createSpy('change listener');
       component.picker.change.subscribe(changeSpy);
@@ -505,7 +476,7 @@ describe('DlDateTimePickerComponent', () => {
       expect(changeSpy.calls.first().args[0].utc).toBe(1262304000000);
     });
 
-    it('should store the value when clicking a .year', function () {
+    it('should store the value internally when clicking a .year', function () {
       const changeSpy = jasmine.createSpy('change listener');
       component.picker.change.subscribe(changeSpy);
 
@@ -517,46 +488,15 @@ describe('DlDateTimePickerComponent', () => {
       expect(changeSpy).toHaveBeenCalled();
       expect(changeSpy.calls.first().args[0].utc).toBe(1262304000000);
     });
-
-    it('should store the value when clicking a .year', function () {
-      const changeSpy = jasmine.createSpy('change listener');
-      component.picker.change.subscribe(changeSpy);
-
-      const yearElements = fixture.debugElement.queryAll(By.css('.year'));
-      yearElements[8].nativeElement.click(); //
-      fixture.detectChanges();
-
-      expect(component.picker.value).toBe(1514764800000);
-      expect(changeSpy).toHaveBeenCalled();
-      expect(changeSpy.calls.first().args[0].utc).toBe(1514764800000);
-    });
-
-    it('should store the value in ngModel when clicking a .year', () => {
-      const yearElements = fixture.debugElement.queryAll(By.css('.year'));
-      yearElements[9].nativeElement.click(); // 2019-01-01
-      fixture.detectChanges();
-
-      expect(component.selectedDate).toBe(1546300800000);
-    });
-
-    it('should store the value in ngModel when hitting enter', () => {
-      const changeSpy = jasmine.createSpy('change listener');
-      component.picker.change.subscribe(changeSpy);
-
-      (component.picker as any)._model.activeDate = new Date('2011-01-01').getTime();
-      fixture.detectChanges();
-
-      const activeElement = fixture.debugElement.query(By.css('.active'));
-
-      dispatchKeyboardEvent(activeElement.nativeElement, 'keydown', ENTER);
-      fixture.detectChanges();
-
-      expect(component.picker.value).toBe(1293840000000);
-      expect(changeSpy).toHaveBeenCalled();
-      expect(changeSpy.calls.first().args[0].utc).toBe(1293840000000);
-      expect(component.selectedDate).toBe(1293840000000);
-    });
   });
+
+  // startDate
+  // filter / disable years
+  // filter / disable left button
+  // filter / disable right button
+  // min
+  // max
+
 
   // Other screen reader issues - search for usability issues
 });

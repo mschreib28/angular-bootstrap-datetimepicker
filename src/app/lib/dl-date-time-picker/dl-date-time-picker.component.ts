@@ -4,6 +4,7 @@ import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
 import {take} from 'rxjs/operators';
 
 const ENTER = 13;
+const SPACE = 32;
 const PAGE_UP = 33;
 const PAGE_DOWN = 34;
 const END = 35;
@@ -55,6 +56,11 @@ export class DlDateTimePickerComponent implements OnInit, ControlValueAccessor {
     'oi-chevron-left': true
   };
 
+  upIconClass = {
+    'oi': true,
+    'oi-chevron-top': true
+  };
+
   // @Input()
   rightIconClass = {
     'oi': true,
@@ -72,12 +78,16 @@ export class DlDateTimePickerComponent implements OnInit, ControlValueAccessor {
   }
 
   ngOnInit(): void {
-    this._model = this.yearModel(new Date().getTime());
+    if (this.startView === 'month') {
+      this._model = this.monthModel(moment.utc().valueOf());
+      return;
+    }
+    this._model = this.yearModel(moment.utc().valueOf());
   }
 
   private yearModel(milliseconds: number): DlDateTimePickerModel {
     const rowNumbers = [0, 1];
-    const yearNumbers = [0, 1, 2, 3, 4];
+    const columnNumbers = [0, 1, 2, 3, 4];
 
     const startYear = moment.utc(milliseconds).startOf('year');
 
@@ -98,11 +108,13 @@ export class DlDateTimePickerComponent implements OnInit, ControlValueAccessor {
       activeDate: startYear.valueOf(),
       leftButton: {
         value: moment.utc(startDate).subtract(9, 'years').valueOf(),
+        ariaLabel: `Go to ${pastYear - 10}-${pastYear - 1}`,
         classes: {},
         iconClasses: this.leftIconClass
       },
       rightButton: {
         value: moment.utc(startDate).add(11, 'years').valueOf(),
+        ariaLabel: `Go to ${futureYear + 1}-${futureYear + 10}`,
         classes: {},
         iconClasses: this.rightIconClass
       },
@@ -117,13 +129,13 @@ export class DlDateTimePickerComponent implements OnInit, ControlValueAccessor {
     function rowOfYears(rowNumber) {
 
       const currentMoment = moment.utc();
-      const cells = yearNumbers.map((yearNumber) => {
-        const yearMoment = moment.utc(startDate).add((rowNumber * yearNumbers.length) + yearNumber, 'years');
+      const cells = columnNumbers.map((columnNumber) => {
+        const yearMoment = moment.utc(startDate).add((rowNumber * columnNumbers.length) + columnNumber, 'years');
         return {
-          'display': yearMoment.format('YYYY'),
-          'value': yearMoment.valueOf(),
-          'classes': {
-            'today': yearMoment.isSame(currentMoment, 'year'),
+          display: yearMoment.format('YYYY'),
+          value: yearMoment.valueOf(),
+          classes: {
+            today: yearMoment.isSame(currentMoment, 'year'),
           }
         };
       });
@@ -132,40 +144,156 @@ export class DlDateTimePickerComponent implements OnInit, ControlValueAccessor {
   }
 
   private monthModel(milliseconds: number): DlDateTimePickerModel {
-    return {
+    const startDate = moment.utc(milliseconds).startOf('year');
+
+    const rowNumbers = [0, 1, 2];
+    const columnNumbers = [0, 1, 2, 3];
+
+    const previousYear = moment.utc(startDate).subtract(1, 'year');
+    const nextYear = moment.utc(startDate).add(1, 'year');
+
+    const result = {
       view: 'month',
-      viewLabel: 'month-view',
-      activeDate: milliseconds,
+      viewLabel: startDate.format('YYYY'),
+      activeDate: moment.utc(milliseconds).startOf('month').valueOf(),
       leftButton: {
-        value: 0,
+        value: previousYear.valueOf(),
+        ariaLabel: `Go to ${previousYear.format('YYYY')}`,
         classes: {},
         iconClasses: this.leftIconClass
       },
-      rightButton: {
+      upButton: {
         value: 0,
+        ariaLabel: `Go to year view`,
+        classes: {},
+        iconClasses: this.upIconClass
+      },
+      rightButton: {
+        value: nextYear.valueOf(),
+        ariaLabel: `Go to ${nextYear.format('YYYY')}`,
         classes: {},
         iconClasses: this.rightIconClass
       },
-      rows: [] // rowNumbers.map(rowOfYears)
+      rows: rowNumbers.map(rowOfMonths)
     };
+
+    result.leftButton.classes[`${result.leftButton.value}`] = true;
+    result.rightButton.classes[`${result.rightButton.value}`] = true;
+
+    return result;
+
+    function rowOfMonths(rowNumber) {
+
+      const currentMoment = moment.utc();
+      const cells = columnNumbers.map((columnNumber) => {
+        const monthMoment = moment.utc(startDate).add((rowNumber * columnNumbers.length) + columnNumber, 'months');
+        return {
+          display: monthMoment.format('MMM'),
+          ariaLabel: monthMoment.format('MMM YYYY'),
+          value: monthMoment.valueOf(),
+          classes: {
+            today: monthMoment.isSame(currentMoment, 'month'),
+          }
+        };
+      });
+      return {cells};
+    }
+  }
+
+  private dayModel(milliseconds: number): DlDateTimePickerModel {
+
+    const startDate = moment.utc(milliseconds).startOf('month');
+
+    const rowNumbers = [0, 1, 2];
+    const columnNumbers = [0, 1, 2, 3];
+
+    const previousMonth = moment.utc(startDate).subtract(1, 'month');
+    const nextMonth = moment.utc(startDate).add(1, 'month');
+
+    const result = {
+      view: 'day',
+      viewLabel: startDate.format('MMM YYYY'),
+      activeDate: milliseconds,
+      leftButton: {
+        value: previousMonth.valueOf(),
+        ariaLabel: `Go to ${previousMonth.format('MMM YYYY')}`,
+        classes: {},
+        iconClasses: this.leftIconClass
+      },
+      upButton: {
+        value: 0,
+        ariaLabel: `Go to month view`,
+        classes: {},
+        iconClasses: this.upIconClass
+      },
+      rightButton: {
+        value: 0,
+        ariaLabel: `Go to ${nextMonth.format('MMM YYYY')}`,
+        classes: {},
+        iconClasses: this.rightIconClass
+      },
+      rows: [] // rowNumbers.map(rowOfDays)
+    };
+
+    result.leftButton.classes[`${result.leftButton.value}`] = true;
+    result.rightButton.classes[`${result.rightButton.value}`] = true;
+
+    return result;
+
+    // function rowOfDays(rowNumber) {
+    //
+    //   const currentMoment = moment.utc();
+    //   const cells = columnNumbers.map((columnNumber) => {
+    //     const monthMoment = moment.utc(startDate).add((rowNumber * columnNumbers.length) + columnNumber, 'months');
+    //     return {
+    //       display: monthMoment.format('ll'),
+    //       ariaLabel: monthMoment.format('LL'),
+    //       value: monthMoment.valueOf(),
+    //       classes: {
+    //         today: monthMoment.isSame(currentMoment, 'month'),
+    //       }
+    //     };
+    //   });
+    //   return {cells};
+    // }
   }
 
   _onDateClick(milliseconds: number) {
-    if (!this.minView) {
-      this._model = this.monthModel(milliseconds);
-    } else {
+
+    if (this.minView === this._model.view) {
       this.value = milliseconds;
+      this._model.view = this.startView;
+    }
+
+    switch (this._model.view) {
+      case 'month':
+        this._model = this.dayModel(milliseconds);
+        break;
+      default:
+        this._model = this.monthModel(milliseconds);
     }
     this._onTouch();
   }
 
   _onLeftClick() {
-    this._model = this.yearModel(this._model.leftButton.value);
+    if (this._model.view === 'month') {
+      this._model = this.monthModel(this._model.leftButton.value);
+    } else {
+      this._model = this.yearModel(this._model.leftButton.value);
+    }
     this._onTouch();
   }
 
+  _onUpClick() {
+    this._model = this.yearModel(this._model.activeDate);
+  }
+
   _onRightClick() {
-    this._model = this.yearModel(this._model.rightButton.value);
+    if (this._model.view === 'month') {
+      this._model = this.monthModel(this._model.rightButton.value);
+    } else {
+      this._model = this.yearModel(this._model.rightButton.value);
+    }
     this._onTouch();
   }
 
@@ -203,6 +331,7 @@ export class DlDateTimePickerComponent implements OnInit, ControlValueAccessor {
   @HostListener('keydown', ['$event'])
   private _handleKeyDown($event: KeyboardEvent): void {
     switch ($event.keyCode) {
+      case SPACE:
       case ENTER:
         this._onDateClick(this._model.activeDate);
         // Prevent unexpected default actions such as form submission.
@@ -228,8 +357,13 @@ export class DlDateTimePickerComponent implements OnInit, ControlValueAccessor {
         this._model = this.yearModel(leftYear);
         break;
       case RIGHT_ARROW:
-        const rightYear = moment.utc(this._model.activeDate).add(1, 'year').valueOf();
-        this._model = this.yearModel(rightYear);
+        if (this._model.view === 'year') {
+          const rightYear = moment.utc(this._model.activeDate).add(1, 'year').valueOf();
+          this._model = this.yearModel(rightYear);
+        } else {
+          const rightMonth = moment.utc(this._model.activeDate).add(1, 'month').valueOf();
+          this._model = this.monthModel(rightMonth);
+        }
         break;
       case UP_ARROW:
         const upYear = moment.utc(this._model.activeDate).subtract(5, 'year').valueOf();
@@ -265,17 +399,26 @@ interface DlDateTimePickerModel {
   activeDate: number;
   leftButton: {
     value: number;
+    ariaLabel: string;
+    classes: {};
+    iconClasses: {};
+  };
+  upButton?: {
+    value: number;
+    ariaLabel: string;
     classes: {};
     iconClasses: {};
   };
   rightButton: {
     value: number;
+    ariaLabel: string;
     classes: {};
     iconClasses: {};
   };
   rows: Array<{
     cells: Array<{
       display: string;
+      ariaLabel: string;
       value: number;
       classes: {};
     }>
