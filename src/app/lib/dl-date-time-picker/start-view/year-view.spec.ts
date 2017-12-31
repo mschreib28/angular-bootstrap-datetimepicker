@@ -388,66 +388,6 @@ describe('DlDateTimePickerComponent', () => {
       const newActiveElement = fixture.debugElement.query(By.css('.active'));
       expect(newActiveElement.nativeElement.textContent).toBe('2019');
     });
-
-    xit('should switch to previous decade value after hitting ENTER on .left-button', () => {
-      const leftButton = fixture.debugElement.query(By.css('.left-button'));
-      dispatchFakeEvent(leftButton.nativeElement, 'focus');
-      fixture.detectChanges();
-
-      dispatchKeyboardEvent(leftButton.nativeElement, 'keydown', ENTER);
-      fixture.detectChanges();
-
-      const viewLabel = fixture.debugElement.query(By.css('.view-label'));
-      expect(viewLabel.nativeElement.textContent).toBe('2000-2009');
-
-      const yearElements = fixture.debugElement.queryAll(By.css('.year'));
-      expect(yearElements[0].nativeElement.textContent.trim()).toBe('2000');
-    });
-
-    xit('should switch to previous decade value after hitting SPACE on .left-button', () => {
-      const leftButton = fixture.debugElement.query(By.css('.left-button'));
-      dispatchFakeEvent(leftButton.nativeElement, 'focus');
-      fixture.detectChanges();
-
-      dispatchKeyboardEvent(leftButton.nativeElement, 'keydown', SPACE);
-      fixture.detectChanges();
-
-      const viewLabel = fixture.debugElement.query(By.css('.view-label'));
-      expect(viewLabel.nativeElement.textContent).toBe('2000-2009');
-
-      const yearElements = fixture.debugElement.queryAll(By.css('.year'));
-      expect(yearElements[0].nativeElement.textContent.trim()).toBe('2000');
-    });
-
-    xit('should switch to previous decade value after hitting ENTER on .right-button', () => {
-      const rightButton = fixture.debugElement.query(By.css('.right-button'));
-      dispatchFakeEvent(rightButton.nativeElement, 'focus');
-      fixture.detectChanges();
-
-      dispatchKeyboardEvent(rightButton.nativeElement, 'keydown', ENTER);
-      fixture.detectChanges();
-
-      const viewLabel = fixture.debugElement.query(By.css('.view-label'));
-      expect(viewLabel.nativeElement.textContent).toBe('2000-2009');
-
-      const yearElements = fixture.debugElement.queryAll(By.css('.year'));
-      expect(yearElements[0].nativeElement.textContent.trim()).toBe('2000');
-    });
-
-    xit('should switch to previous decade value after hitting SPACE on .right-button', () => {
-      const rightButton = fixture.debugElement.query(By.css('.right-button'));
-      dispatchFakeEvent(rightButton.nativeElement, 'focus');
-      fixture.detectChanges();
-
-      dispatchKeyboardEvent(rightButton.nativeElement, 'keydown', SPACE);
-      fixture.detectChanges();
-
-      const viewLabel = fixture.debugElement.query(By.css('.view-label'));
-      expect(viewLabel.nativeElement.textContent).toBe('2020-2029');
-
-      const yearElements = fixture.debugElement.queryAll(By.css('.year'));
-      expect(yearElements[9].nativeElement.textContent.trim()).toBe('2029');
-    });
   });
 
   describe('year selector (minView=year)', () => {

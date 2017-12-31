@@ -59,11 +59,11 @@ export class MonthModelFactory implements ModelFactory {
   }
 
   goUp(fromMilliseconds: number): DlDateTimePickerModel {
-    return undefined;
+    return this.getModel(moment.utc(fromMilliseconds).subtract(4, 'month').valueOf());
   }
 
   goDown(fromMilliseconds: number): DlDateTimePickerModel {
-    return undefined;
+    return this.getModel(moment.utc(fromMilliseconds).add(4, 'month').valueOf());
   }
 
   goLeft(fromMilliseconds: number): DlDateTimePickerModel {
@@ -75,11 +75,10 @@ export class MonthModelFactory implements ModelFactory {
   }
 
   pageUp(fromMilliseconds: number): DlDateTimePickerModel {
-    return undefined;
+    return this.getModel(moment.utc(fromMilliseconds).subtract(12, 'months').valueOf());
   }
 
   pageDown(fromMilliseconds: number): DlDateTimePickerModel {
-    return undefined;
+    return this.getModel(moment.utc(fromMilliseconds).add(12, 'months').valueOf());
   }
-
 }

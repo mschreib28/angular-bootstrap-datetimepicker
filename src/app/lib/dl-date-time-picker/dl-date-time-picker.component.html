@@ -1,6 +1,7 @@
 <div class="text-center {{_model.view}}-view ">
   <div class="row align-items-center no-gutters">
     <button class="col left-button"
+            type="button"
             [attr.aria-label]="_model.leftButton.ariaLabel"
             [attr.title]="_model.leftButton.ariaLabel"
             [ngClass]="_model.leftButton.classes"
@@ -11,6 +12,7 @@
     <div *ngIf="_model.view === 'year'; then yearViewLabel else defaultViewLabel;"></div>
 
     <button class="col right-button"
+            type="button"
             [attr.aria-label]="_model.rightButton.ariaLabel"
             [attr.title]="_model.rightButton.ariaLabel"
             (click)="_onRightClick()"
@@ -18,26 +20,31 @@
       <span [ngClass]="rightIconClasses"></span>
     </button>
   </div>
-  <div *ngFor="let row of _model.rows" class="row align-items-center no-gutters">
-    <div *ngFor="let cell of row.cells"
-         role="gridcell"
-         class="col date-button {{_model.view}} {{cell.value}}"
-         [class.active]="_isActiveCell(cell.value)"
-         [ngClass]="cell.classes"
-         [attr.aria-label]="cell.ariaLabel"
-         [attr.tabindex]="_isActiveCell(cell.value) ? 0 : -1"
-         (click)="_onDateClick(cell.value)"
-    >{{cell.display}}</div>
+  <div (keydown)="_handleKeyDown($event)">
+    <div *ngFor="let row of _model.rows" class="row align-items-center no-gutters">
+      <div *ngFor="let cell of row.cells"
+           role="gridcell"
+           class="col date-button {{_model.view}} {{cell.value}}"
+           [class.active]="_isActiveCell(cell.value)"
+           [ngClass]="cell.classes"
+           [attr.aria-label]="cell.ariaLabel"
+           [attr.tabindex]="_isActiveCell(cell.value) ? 0 : -1"
+           (click)="_onDateClick(cell.value)"
+      >{{cell.display}}</div>
+    </div>
   </div>
 </div>
 
-<ng-template #yearViewLabel><div class="col view-label">{{_model.viewLabel}}</div></ng-template>
+<ng-template #yearViewLabel>
+  <div class="col view-label">{{_model.viewLabel}}</div>
+</ng-template>
 <ng-template #defaultViewLabel>
   <button class="col view-label up-button"
-    [attr.aria-label]="_model.upButton.ariaLabel"
-    [attr.title]="_model.upButton.ariaLabel"
-    (click)="_onUpClick()"
-    [ngClass]="_model.upButton.classes"
+          type="button"
+          [attr.aria-label]="_model.upButton.ariaLabel"
+          [attr.title]="_model.upButton.ariaLabel"
+          (click)="_onUpClick()"
+          [ngClass]="_model.upButton.classes"
   >{{_model.viewLabel}}&nbsp;<span [ngClass]="upIconClasses"></span>
   </button>
 </ng-template>

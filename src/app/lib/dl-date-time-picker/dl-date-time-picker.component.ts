@@ -156,9 +156,7 @@ export class DlDateTimePickerComponent implements OnInit, ControlValueAccessor {
     return this._model.activeDate === value;
   }
 
-  /** Handles keydown events on the calendar body when calendar is in year view. */
-  @HostListener('keydown', ['$event'])
-  private _handleKeyDown($event: KeyboardEvent): void {
+  _handleKeyDown($event: KeyboardEvent): void {
     const currentViewFactory = this._viewToFactory[this._model.view];
     switch ($event.keyCode) {
       case SPACE:

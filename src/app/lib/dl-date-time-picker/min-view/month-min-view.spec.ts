@@ -24,14 +24,6 @@ class YearStartViewComponent {
   @ViewChild(DlDateTimePickerComponent) picker: DlDateTimePickerComponent;
 }
 
-// @Component({
-//   template: '<dl-date-time-picker [(ngModel)]="selectedDate" startView="month" minView="month"></dl-date-time-picker>'
-// })
-// class MonthSelectorComponent {
-//   selectedDate: number;
-//   @ViewChild(DlDateTimePickerComponent) picker: DlDateTimePickerComponent;
-// }
-
 describe('DlDateTimePickerComponent startView=month', () => {
 
   beforeEach(async(() => {
@@ -228,23 +220,23 @@ describe('DlDateTimePickerComponent startView=month', () => {
       expect(newActiveElement.nativeElement.textContent).toBe('Nov');
     });
 
-    xit('should change to next decade when last .year is .active element and pressing on right arrow', () => {
-      (component.picker as any)._model.activeDate = new Date('2019-01-01').getTime();
+    it('should change to next year when last .month is .active element and pressing on right arrow', () => {
+      (component.picker as any)._model.activeDate = new Date('2017-12-01').getTime();
       fixture.detectChanges();
 
-      dispatchKeyboardEvent(fixture.debugElement.query(By.css('.active')).nativeElement, 'keydown', RIGHT_ARROW); // 2019
+      dispatchKeyboardEvent(fixture.debugElement.query(By.css('.active')).nativeElement, 'keydown', RIGHT_ARROW); // 2018
       fixture.detectChanges();
 
       const activeElement = fixture.debugElement.query(By.css('.active'));
-      expect(activeElement.nativeElement.textContent).toBe('2020');
+      expect(activeElement.nativeElement.textContent).toBe('Jan');
 
       const viewLabel = fixture.debugElement.query(By.css('.view-label'));
-      expect(viewLabel.nativeElement.textContent).toBe('2020-2029');
+      expect(viewLabel.nativeElement.textContent.trim()).toBe('2018');
     });
 
-    xit('should change .active element on left arrow', () => {
+    it('should change .active element on left arrow', () => {
       const activeElement = fixture.debugElement.query(By.css('.active'));
-      expect(activeElement.nativeElement.textContent).toBe('2017');
+      expect(activeElement.nativeElement.textContent).toBe('Dec');
 
       dispatchFakeEvent(activeElement.nativeElement, 'focus');
       fixture.detectChanges();
@@ -253,26 +245,26 @@ describe('DlDateTimePickerComponent startView=month', () => {
       fixture.detectChanges();
 
       const newActiveElement = fixture.debugElement.query(By.css('.active'));
-      expect(newActiveElement.nativeElement.textContent).toBe('2016');
+      expect(newActiveElement.nativeElement.textContent).toBe('Nov');
     });
 
-    xit('should change to previous decade when first .year is .active element and pressing on left arrow', () => {
-      (component.picker as any)._model.activeDate = new Date('2010-01-01').getTime();
+    it('should change to previous year when first .month is .active element and pressing on left arrow', () => {
+      (component.picker as any)._model.activeDate = new Date('2017-01-01').getTime();
       fixture.detectChanges();
 
       dispatchKeyboardEvent(fixture.debugElement.query(By.css('.active')).nativeElement, 'keydown', LEFT_ARROW); // 2019
       fixture.detectChanges();
 
       const activeElement = fixture.debugElement.query(By.css('.active'));
-      expect(activeElement.nativeElement.textContent).toBe('2009');
+      expect(activeElement.nativeElement.textContent).toBe('Dec');
 
       const viewLabel = fixture.debugElement.query(By.css('.view-label'));
-      expect(viewLabel.nativeElement.textContent).toBe('2000-2009');
+      expect(viewLabel.nativeElement.textContent.trim()).toBe('2016');
     });
 
-    xit('should change .active element on up arrow', () => {
+    it('should change .active element on up arrow', () => {
       const activeElement = fixture.debugElement.query(By.css('.active'));
-      expect(activeElement.nativeElement.textContent).toBe('2017');
+      expect(activeElement.nativeElement.textContent).toBe('Dec');
 
       dispatchFakeEvent(activeElement.nativeElement, 'focus');
       fixture.detectChanges();
@@ -281,29 +273,29 @@ describe('DlDateTimePickerComponent startView=month', () => {
       fixture.detectChanges();
 
       const newActiveElement = fixture.debugElement.query(By.css('.active'));
-      expect(newActiveElement.nativeElement.textContent).toBe('2012');
+      expect(newActiveElement.nativeElement.textContent).toBe('Aug');
     });
 
-    xit('should change to previous decade when first .year is .active element and pressing on up arrow', () => {
-      (component.picker as any)._model.activeDate = new Date('2014-01-01').getTime();
+    it('should change to previous year when first .month is .active element and pressing on up arrow', () => {
+      (component.picker as any)._model.activeDate = new Date('2017-01-01').getTime();
       fixture.detectChanges();
 
       dispatchKeyboardEvent(fixture.debugElement.query(By.css('.active')).nativeElement, 'keydown', UP_ARROW); // 2019
       fixture.detectChanges();
 
       const activeElement = fixture.debugElement.query(By.css('.active'));
-      expect(activeElement.nativeElement.textContent).toBe('2009');
+      expect(activeElement.nativeElement.textContent).toBe('Sep');
 
       const viewLabel = fixture.debugElement.query(By.css('.view-label'));
-      expect(viewLabel.nativeElement.textContent).toBe('2000-2009');
+      expect(viewLabel.nativeElement.textContent.trim()).toBe('2016');
     });
 
-    xit('should change .active element on down arrow', () => {
-      (component.picker as any)._model.activeDate = new Date('2014-01-01').getTime();
+    it('should change .active element on down arrow', () => {
+      (component.picker as any)._model.activeDate = new Date('2017-06-01').getTime();
       fixture.detectChanges();
 
       const activeElement = fixture.debugElement.query(By.css('.active'));
-      expect(activeElement.nativeElement.textContent).toBe('2014');
+      expect(activeElement.nativeElement.textContent).toBe('Jun');
 
       dispatchFakeEvent(activeElement.nativeElement, 'focus');
       fixture.detectChanges();
@@ -312,15 +304,15 @@ describe('DlDateTimePickerComponent startView=month', () => {
       fixture.detectChanges();
 
       const newActiveElement = fixture.debugElement.query(By.css('.active'));
-      expect(newActiveElement.nativeElement.textContent).toBe('2019');
+      expect(newActiveElement.nativeElement.textContent).toBe('Oct');
     });
 
-    xit('should change .active element on page-up (fn+up-arrow)', () => {
-      (component.picker as any)._model.activeDate = new Date('2016-01-01').getTime();
+    it('should change .active element on page-up (fn+up-arrow)', () => {
+      (component.picker as any)._model.activeDate = new Date('2017-05-01').getTime();
       fixture.detectChanges();
 
       const activeElement = fixture.debugElement.query(By.css('.active'));
-      expect(activeElement.nativeElement.textContent).toBe('2016');
+      expect(activeElement.nativeElement.textContent).toBe('May');
 
       dispatchFakeEvent(activeElement.nativeElement, 'focus');
       fixture.detectChanges();
@@ -329,16 +321,19 @@ describe('DlDateTimePickerComponent startView=month', () => {
       fixture.detectChanges();
 
       const newActiveElement = fixture.debugElement.query(By.css('.active'));
-      expect(newActiveElement.nativeElement.textContent).toBe('2006');
+      expect(newActiveElement.nativeElement.textContent).toBe('May');
+
+      const viewLabel = fixture.debugElement.query(By.css('.view-label'));
+      expect(viewLabel.nativeElement.textContent.trim()).toBe('2016');
     });
 
 
-    xit('should change .active element on page-down (fn+down-arrow)', () => {
-      (component.picker as any)._model.activeDate = new Date('2016-01-01').getTime();
+    it('should change .active element on page-down (fn+down-arrow)', () => {
+      (component.picker as any)._model.activeDate = new Date('2017-01-01').getTime();
       fixture.detectChanges();
 
       const activeElement = fixture.debugElement.query(By.css('.active'));
-      expect(activeElement.nativeElement.textContent).toBe('2016');
+      expect(activeElement.nativeElement.textContent).toBe('Jan');
 
       dispatchFakeEvent(activeElement.nativeElement, 'focus');
       fixture.detectChanges();
@@ -347,15 +342,18 @@ describe('DlDateTimePickerComponent startView=month', () => {
       fixture.detectChanges();
 
       const newActiveElement = fixture.debugElement.query(By.css('.active'));
-      expect(newActiveElement.nativeElement.textContent).toBe('2026');
+      expect(newActiveElement.nativeElement.textContent).toBe('Jan');
+
+      const viewLabel = fixture.debugElement.query(By.css('.view-label'));
+      expect(viewLabel.nativeElement.textContent.trim()).toBe('2018');
     });
 
-    xit('should change .active element to first .year on HOME', () => {
-      (component.picker as any)._model.activeDate = new Date('2016-01-01').getTime();
+    it('should change .active element to first .month on HOME', () => {
+      (component.picker as any)._model.activeDate = new Date('2017-12-01').getTime();
       fixture.detectChanges();
 
       const activeElement = fixture.debugElement.query(By.css('.active'));
-      expect(activeElement.nativeElement.textContent).toBe('2016');
+      expect(activeElement.nativeElement.textContent).toBe('Dec');
 
       dispatchFakeEvent(activeElement.nativeElement, 'focus');
       fixture.detectChanges();
@@ -364,12 +362,15 @@ describe('DlDateTimePickerComponent startView=month', () => {
       fixture.detectChanges();
 
       const newActiveElement = fixture.debugElement.query(By.css('.active'));
-      expect(newActiveElement.nativeElement.textContent).toBe('2010');
+      expect(newActiveElement.nativeElement.textContent).toBe('Jan');
     });
 
-    xit('should change .active element to first .year on END', () => {
+    it('should change .active element to last .month on END', () => {
+      (component.picker as any)._model.activeDate = new Date('2017-01-01').getTime();
+      fixture.detectChanges();
+
       const activeElement = fixture.debugElement.query(By.css('.active'));
-      expect(activeElement.nativeElement.textContent).toBe('2017');
+      expect(activeElement.nativeElement.textContent).toBe('Jan');
 
       dispatchFakeEvent(activeElement.nativeElement, 'focus');
       fixture.detectChanges();
@@ -378,27 +379,24 @@ describe('DlDateTimePickerComponent startView=month', () => {
       fixture.detectChanges();
 
       const newActiveElement = fixture.debugElement.query(By.css('.active'));
-      expect(newActiveElement.nativeElement.textContent).toBe('2019');
+      expect(newActiveElement.nativeElement.textContent).toBe('Dec');
     });
 
-    xit('should do nothing when hitting non-supported key', () => {
+    it('should do nothing when hitting non-supported key', () => {
       (component.picker as any)._model.activeDate = new Date('2017-12-01').getTime();
       fixture.detectChanges();
 
       let activeElement = fixture.debugElement.query(By.css('.active'));
-      expect(activeElement.nativeElement.textContent).toBe('Jan');
+      expect(activeElement.nativeElement.textContent).toBe('Dec');
 
       dispatchKeyboardEvent(activeElement.nativeElement, 'keydown', 65); // A
       fixture.detectChanges();
 
       activeElement = fixture.debugElement.query(By.css('.active'));
-      expect(activeElement.nativeElement.textContent).toBe('Jan');
+      expect(activeElement.nativeElement.textContent).toBe('Dec');
     });
 
-    xit('should change to .day-view when hitting ENTER', () => {
-      (component.picker as any)._model.activeDate = new Date('1966-12-06').getTime();
-      fixture.detectChanges();
-
+    it('should change to .day-view when hitting ENTER', () => {
       const activeElement = fixture.debugElement.query(By.css('.active'));
 
       dispatchKeyboardEvent(activeElement.nativeElement, 'keydown', ENTER);
@@ -407,24 +405,21 @@ describe('DlDateTimePickerComponent startView=month', () => {
       const monthView = fixture.debugElement.query(By.css('.month-view'));
       expect(monthView).toBeFalsy();
 
-      const yearView = fixture.debugElement.query(By.css('.day-view'));
-      expect(yearView).toBeFalsy();
+      const dayView = fixture.debugElement.query(By.css('.day-view'));
+      expect(dayView).toBeTruthy();
     });
 
-    xit('should change to .month-view when hitting SPACE', () => {
-      (component.picker as any)._model.activeDate = new Date('2011-01-01').getTime();
-      fixture.detectChanges();
-
+    it('should change to .day-view when hitting SPACE', () => {
       const activeElement = fixture.debugElement.query(By.css('.active'));
 
       dispatchKeyboardEvent(activeElement.nativeElement, 'keydown', SPACE);
       fixture.detectChanges();
 
       const monthView = fixture.debugElement.query(By.css('.month-view'));
-      expect(monthView).toBeTruthy();
+      expect(monthView).toBeFalsy();
 
-      const yearView = fixture.debugElement.query(By.css('.year-view'));
-      expect(yearView).toBeFalsy();
+      const dayView = fixture.debugElement.query(By.css('.day-view'));
+      expect(dayView).toBeTruthy();
     });
   });
 
