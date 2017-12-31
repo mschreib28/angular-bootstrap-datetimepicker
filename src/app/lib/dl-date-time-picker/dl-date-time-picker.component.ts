@@ -1,4 +1,4 @@
-import {Component, ElementRef, EventEmitter, HostListener, Input, NgZone, OnInit, Output} from '@angular/core';
+import {ChangeDetectionStrategy, Component, ElementRef, EventEmitter, HostListener, Input, NgZone, OnInit, Output} from '@angular/core';
 import * as moment from 'moment';
 import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
 import {take} from 'rxjs/operators';
@@ -28,16 +28,18 @@ class DlDateTimePickerChange {
 }
 
 @Component({
-  selector: 'dl-date-time-picker',
-  templateUrl: './dl-date-time-picker.component.html',
-  styleUrls: ['./dl-date-time-picker.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  preserveWhitespaces: false,
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
       useExisting: DlDateTimePickerComponent,
       multi: true
     }
-  ]
+  ] ,
+  selector: 'dl-date-time-picker',
+  styleUrls: ['./dl-date-time-picker.component.css'],
+  templateUrl: './dl-date-time-picker.component.html',
 })
 export class DlDateTimePickerComponent implements OnInit, ControlValueAccessor {
 

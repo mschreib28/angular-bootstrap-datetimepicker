@@ -173,22 +173,16 @@ describe('DlDateTimePickerComponent', () => {
     });
 
     it('should do nothing when hitting non-supported key', () => {
-      (component.picker as any)._model.activeDate = new Date('2011-01-01').getTime();
-      fixture.detectChanges();
-
       const activeElement = fixture.debugElement.query(By.css('.active'));
-      expect(activeElement.nativeElement.textContent).toBe('2011');
+      expect(activeElement.nativeElement.textContent).toBe('2017');
 
       dispatchKeyboardEvent(activeElement.nativeElement, 'keydown', 65); // A
       fixture.detectChanges();
 
-      expect(activeElement.nativeElement.textContent).toBe('2011');
+      expect(activeElement.nativeElement.textContent).toBe('2017');
     });
 
     it('should change to .month-view when hitting ENTER', () => {
-      (component.picker as any)._model.activeDate = new Date('2011-01-01').getTime();
-      fixture.detectChanges();
-
       const activeElement = fixture.debugElement.query(By.css('.active'));
 
       dispatchKeyboardEvent(activeElement.nativeElement, 'keydown', ENTER);
@@ -307,11 +301,8 @@ describe('DlDateTimePickerComponent', () => {
     });
 
     it('should change .active element on down arrow', () => {
-      (component.picker as any)._model.activeDate = new Date('2014-01-01').getTime();
-      fixture.detectChanges();
-
       const activeElement = fixture.debugElement.query(By.css('.active'));
-      expect(activeElement.nativeElement.textContent).toBe('2014');
+      expect(activeElement.nativeElement.textContent).toBe('2017');
 
       dispatchFakeEvent(activeElement.nativeElement, 'focus');
       fixture.detectChanges();
@@ -320,15 +311,12 @@ describe('DlDateTimePickerComponent', () => {
       fixture.detectChanges();
 
       const newActiveElement = fixture.debugElement.query(By.css('.active'));
-      expect(newActiveElement.nativeElement.textContent).toBe('2019');
+      expect(newActiveElement.nativeElement.textContent).toBe('2022');
     });
 
     it('should change .active element on page-up (fn+up-arrow)', () => {
-      (component.picker as any)._model.activeDate = new Date('2016-01-01').getTime();
-      fixture.detectChanges();
-
       const activeElement = fixture.debugElement.query(By.css('.active'));
-      expect(activeElement.nativeElement.textContent).toBe('2016');
+      expect(activeElement.nativeElement.textContent).toBe('2017');
 
       dispatchFakeEvent(activeElement.nativeElement, 'focus');
       fixture.detectChanges();
@@ -337,16 +325,12 @@ describe('DlDateTimePickerComponent', () => {
       fixture.detectChanges();
 
       const newActiveElement = fixture.debugElement.query(By.css('.active'));
-      expect(newActiveElement.nativeElement.textContent).toBe('2006');
+      expect(newActiveElement.nativeElement.textContent).toBe('2007');
     });
 
-
     it('should change .active element on page-down (fn+down-arrow)', () => {
-      (component.picker as any)._model.activeDate = new Date('2016-01-01').getTime();
-      fixture.detectChanges();
-
       const activeElement = fixture.debugElement.query(By.css('.active'));
-      expect(activeElement.nativeElement.textContent).toBe('2016');
+      expect(activeElement.nativeElement.textContent).toBe('2017');
 
       dispatchFakeEvent(activeElement.nativeElement, 'focus');
       fixture.detectChanges();
@@ -355,15 +339,12 @@ describe('DlDateTimePickerComponent', () => {
       fixture.detectChanges();
 
       const newActiveElement = fixture.debugElement.query(By.css('.active'));
-      expect(newActiveElement.nativeElement.textContent).toBe('2026');
+      expect(newActiveElement.nativeElement.textContent).toBe('2027');
     });
 
     it('should change .active element to first .year on HOME', () => {
-      (component.picker as any)._model.activeDate = new Date('2016-01-01').getTime();
-      fixture.detectChanges();
-
       const activeElement = fixture.debugElement.query(By.css('.active'));
-      expect(activeElement.nativeElement.textContent).toBe('2016');
+      expect(activeElement.nativeElement.textContent).toBe('2017');
 
       dispatchFakeEvent(activeElement.nativeElement, 'focus');
       fixture.detectChanges();
