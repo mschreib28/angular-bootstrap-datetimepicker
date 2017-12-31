@@ -172,8 +172,8 @@ describe('DlDateTimePickerComponent startView=month', () => {
     });
 
     it('should switch to year view after clicking .up-button', () => {
-      const rightButton = fixture.debugElement.query(By.css('.up-button'));
-      rightButton.nativeElement.click();
+      const upButton = fixture.debugElement.query(By.css('.up-button'));
+      upButton.nativeElement.click();
       fixture.detectChanges();
 
       const viewLabel = fixture.debugElement.query(By.css('.view-label'));

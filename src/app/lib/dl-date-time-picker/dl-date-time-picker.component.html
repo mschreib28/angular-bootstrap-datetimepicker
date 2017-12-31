@@ -5,7 +5,7 @@
             [attr.title]="_model.leftButton.ariaLabel"
             [ngClass]="_model.leftButton.classes"
             (click)="_onLeftClick()">
-      <span [ngClass]="_model.leftButton.iconClasses"></span>
+      <span [ngClass]="leftIconClasses"></span>
     </button>
 
     <div *ngIf="_model.view === 'year'; then yearViewLabel else defaultViewLabel;"></div>
@@ -15,7 +15,7 @@
             [attr.title]="_model.rightButton.ariaLabel"
             (click)="_onRightClick()"
             [ngClass]="_model.rightButton.classes">
-      <span [ngClass]="_model.rightButton.iconClasses"></span>
+      <span [ngClass]="rightIconClasses"></span>
     </button>
   </div>
   <div *ngFor="let row of _model.rows" class="row align-items-center no-gutters">
@@ -38,6 +38,6 @@
     [attr.title]="_model.upButton.ariaLabel"
     (click)="_onUpClick()"
     [ngClass]="_model.upButton.classes"
-  >{{_model.viewLabel}}&nbsp;<span [ngClass]="_model.upButton.iconClasses"></span>
+  >{{_model.viewLabel}}&nbsp;<span [ngClass]="upIconClasses"></span>
   </button>
 </ng-template>
