@@ -9,15 +9,9 @@ export class YearModelFactory implements ModelFactory {
     const columnNumbers = [0, 1, 2, 3, 4];
 
     const startYear = moment.utc(milliseconds).startOf('year');
-
-    // View starts one year before the decade starts and ends one year after the decade ends
-    // i.e. passing in a date of 1/1/2013 will give a range of 2009 to 2020
-    // Truncate the last digit from the current year and subtract 1 to get the start of the decade
+    // Truncate the last digit from the current year to get the start of the decade
     const startDecade = (Math.trunc(startYear.year() / 10) * 10);
-
-    const startDate = moment.utc(`${startDecade}-01-01`).startOf('year');
-
-    // future and past years range is inclusive of start year decade.
+    const startDate = moment.utc(`${startDecade}-01-01`, 'YYYY-MM-DD').startOf('year');
     const futureYear = startDate.year() + 9;
     const pastYear = startDate.year();
 

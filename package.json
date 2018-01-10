@@ -2,6 +2,11 @@
   "name": "angular-bootstrap-datetimepicker",
   "version": "0.0.0",
   "license": "MIT",
+  "author": "https://github.com/dalelotts/angular-bootstrap-datetimepicker/graphs/contributors",
+  "bugs": {
+    "url": "https://github.com/dalelotts/angular-bootstrap-datetimepicker/issues"
+  },
+  "homepage": "https://dalelotts.github.io/angular-bootstrap-datetimepicker",
   "scripts": {
     "build": "ng build",
     "build:lib": "ng-packagr -p ng-package.json",

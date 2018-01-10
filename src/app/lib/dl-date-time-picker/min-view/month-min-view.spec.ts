@@ -18,6 +18,15 @@ class MonthStartViewComponent {
 }
 
 @Component({
+
+  template: '<dl-date-time-picker startView="month" [(ngModel)]="selectedDate"></dl-date-time-picker>'
+})
+class MonthStartViewWithNgModelComponent {
+  selectedDate = 1514160000000; // 2017-12-22
+  @ViewChild(DlDateTimePickerComponent) picker: DlDateTimePickerComponent;
+}
+
+@Component({
   template: '<dl-date-time-picker startView="year"></dl-date-time-picker>'
 })
 class YearStartViewComponent {
@@ -32,7 +41,9 @@ describe('DlDateTimePickerComponent startView=month', () => {
       declarations: [
         DlDateTimePickerComponent,
         MonthStartViewComponent,
-        YearStartViewComponent]
+        MonthStartViewWithNgModelComponent,
+        YearStartViewComponent
+      ]
     })
       .compileComponents();
   }));
@@ -43,22 +54,20 @@ describe('DlDateTimePickerComponent startView=month', () => {
     let debugElement: DebugElement;
     let nativeElement: any;
 
-    beforeEach(() => {
+    beforeEach(async(() => {
       fixture = TestBed.createComponent(MonthStartViewComponent);
-      component = fixture.componentInstance;
-      debugElement = fixture.debugElement;
-      nativeElement = debugElement.nativeElement;
       fixture.detectChanges();
-    });
+      fixture.whenStable().then(() => {
+        fixture.detectChanges();
+        component = fixture.componentInstance;
+        debugElement = fixture.debugElement;
+        nativeElement = debugElement.nativeElement;
+      });
+    }));
 
     it('should start with month-view', () => {
       const monthView = fixture.debugElement.query(By.css('.month-view'));
       expect(monthView).toBeTruthy();
-    });
-
-    it('should contain .view-label element with "2017"', () => {
-      const viewLabel = fixture.debugElement.query(By.css('.view-label'));
-      expect(viewLabel.nativeElement.textContent.trim()).toBe('2017');
     });
 
     it('should contain 12 .month elements', () => {
@@ -69,8 +78,32 @@ describe('DlDateTimePickerComponent startView=month', () => {
     it('should contain 1 .today element for the current month', () => {
       const currentElements = fixture.debugElement.queryAll(By.css('.today'));
       expect(currentElements.length).toBe(1);
-      expect(currentElements[0].nativeElement.textContent.trim()).toBe('Dec');
-      expect(currentElements[0].nativeElement.classList).toContain('1512086400000');
+      expect(currentElements[0].nativeElement.textContent.trim()).toBe(moment.utc().format('MMM'));
+      expect(currentElements[0].nativeElement.classList).toContain(moment.utc().startOf('month').valueOf().toString());
+    });
+  });
+
+  describe('ngModel=2017-12-22', () => {
+    let component: MonthStartViewWithNgModelComponent;
+    let fixture: ComponentFixture<MonthStartViewWithNgModelComponent>;
+    let debugElement: DebugElement;
+    let nativeElement: any;
+
+    beforeEach(async(() => {
+      fixture = TestBed.createComponent(MonthStartViewWithNgModelComponent);
+      fixture.detectChanges();
+      fixture.whenStable().then(() => {
+        fixture.detectChanges();
+        component = fixture.componentInstance;
+        debugElement = fixture.debugElement;
+        nativeElement = debugElement.nativeElement;
+      });
+    }));
+
+
+    it('should contain .view-label element with "2017"', () => {
+      const viewLabel = fixture.debugElement.query(By.css('.view-label'));
+      expect(viewLabel.nativeElement.textContent.trim()).toBe('2017');
     });
 
     it('should contain 12 .month elements with start of month utc time as class and role of gridcell', () => {
@@ -207,9 +240,7 @@ describe('DlDateTimePickerComponent startView=month', () => {
       const activeElement = fixture.debugElement.query(By.css('.active'));
       expect(activeElement.nativeElement.textContent).toBe('Dec');
 
-      dispatchFakeEvent(activeElement.nativeElement, 'focus');
-      fixture.detectChanges();
-
+      activeElement.nativeElement.focus();
       dispatchKeyboardEvent(activeElement.nativeElement, 'keydown', RIGHT_ARROW);
       fixture.detectChanges();
 
@@ -235,9 +266,7 @@ describe('DlDateTimePickerComponent startView=month', () => {
       const activeElement = fixture.debugElement.query(By.css('.active'));
       expect(activeElement.nativeElement.textContent).toBe('Dec');
 
-      dispatchFakeEvent(activeElement.nativeElement, 'focus');
-      fixture.detectChanges();
-
+      activeElement.nativeElement.focus();
       dispatchKeyboardEvent(activeElement.nativeElement, 'keydown', LEFT_ARROW);
       fixture.detectChanges();
 
@@ -263,9 +292,7 @@ describe('DlDateTimePickerComponent startView=month', () => {
       const activeElement = fixture.debugElement.query(By.css('.active'));
       expect(activeElement.nativeElement.textContent).toBe('Dec');
 
-      dispatchFakeEvent(activeElement.nativeElement, 'focus');
-      fixture.detectChanges();
-
+      activeElement.nativeElement.focus();
       dispatchKeyboardEvent(activeElement.nativeElement, 'keydown', UP_ARROW);
       fixture.detectChanges();
 
@@ -291,9 +318,7 @@ describe('DlDateTimePickerComponent startView=month', () => {
       const activeElement = fixture.debugElement.query(By.css('.active'));
       expect(activeElement.nativeElement.textContent).toBe('Dec');
 
-      dispatchFakeEvent(activeElement.nativeElement, 'focus');
-      fixture.detectChanges();
-
+      activeElement.nativeElement.focus();
       dispatchKeyboardEvent(activeElement.nativeElement, 'keydown', DOWN_ARROW);
       fixture.detectChanges();
 
@@ -305,9 +330,7 @@ describe('DlDateTimePickerComponent startView=month', () => {
       const activeElement = fixture.debugElement.query(By.css('.active'));
       expect(activeElement.nativeElement.textContent).toBe('Dec');
 
-      dispatchFakeEvent(activeElement.nativeElement, 'focus');
-      fixture.detectChanges();
-
+      activeElement.nativeElement.focus();
       dispatchKeyboardEvent(activeElement.nativeElement, 'keydown', PAGE_UP);
       fixture.detectChanges();
 
@@ -322,9 +345,7 @@ describe('DlDateTimePickerComponent startView=month', () => {
       const activeElement = fixture.debugElement.query(By.css('.active'));
       expect(activeElement.nativeElement.textContent).toBe('Dec');
 
-      dispatchFakeEvent(activeElement.nativeElement, 'focus');
-      fixture.detectChanges();
-
+      activeElement.nativeElement.focus();
       dispatchKeyboardEvent(activeElement.nativeElement, 'keydown', PAGE_DOWN);
       fixture.detectChanges();
 
@@ -339,9 +360,7 @@ describe('DlDateTimePickerComponent startView=month', () => {
       const activeElement = fixture.debugElement.query(By.css('.active'));
       expect(activeElement.nativeElement.textContent).toBe('Dec');
 
-      dispatchFakeEvent(activeElement.nativeElement, 'focus');
-      fixture.detectChanges();
-
+      activeElement.nativeElement.focus();
       dispatchKeyboardEvent(activeElement.nativeElement, 'keydown', HOME);
       fixture.detectChanges();
 
@@ -353,9 +372,7 @@ describe('DlDateTimePickerComponent startView=month', () => {
       const activeElement = fixture.debugElement.query(By.css('.active'));
       expect(activeElement.nativeElement.textContent).toBe('Dec');
 
-      dispatchFakeEvent(activeElement.nativeElement, 'focus');
-      fixture.detectChanges();
-
+      activeElement.nativeElement.focus();
       dispatchKeyboardEvent(activeElement.nativeElement, 'keydown', END);
       fixture.detectChanges();
 

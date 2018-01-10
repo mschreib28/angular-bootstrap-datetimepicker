@@ -4,15 +4,17 @@ import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {By} from '@angular/platform-browser';
 import {FormsModule} from '@angular/forms';
 import {
-  dispatchFakeEvent, dispatchKeyboardEvent, DOWN_ARROW, END, ENTER, HOME, LEFT_ARROW, PAGE_DOWN, PAGE_UP, RIGHT_ARROW, SPACE,
+  dispatchKeyboardEvent, DOWN_ARROW, END, ENTER, HOME, LEFT_ARROW, PAGE_DOWN, PAGE_UP, RIGHT_ARROW, SPACE,
   UP_ARROW
 } from '../../../../testing/dispatch-events';
+import * as moment from 'moment';
 
 @Component({
 
-  template: '<dl-date-time-picker startView="year"></dl-date-time-picker>'
+  template: '<dl-date-time-picker startView="year" [(ngModel)]="selectedDate"></dl-date-time-picker>'
 })
 class StartViewYearComponent {
+  selectedDate = 1514160000000; // 2017-12-22
   @ViewChild(DlDateTimePickerComponent) picker: DlDateTimePickerComponent;
 }
 
@@ -20,7 +22,6 @@ class StartViewYearComponent {
   template: '<dl-date-time-picker startView="year" minView="year" maxView="year"></dl-date-time-picker>'
 })
 class YearSelectorComponent {
-  selectedDate: number;
   @ViewChild(DlDateTimePickerComponent) picker: DlDateTimePickerComponent;
 }
 
@@ -43,13 +44,16 @@ describe('DlDateTimePickerComponent', () => {
     let debugElement: DebugElement;
     let nativeElement: any;
 
-    beforeEach(() => {
+    beforeEach(async(() => {
       fixture = TestBed.createComponent(StartViewYearComponent);
-      component = fixture.componentInstance;
-      debugElement = fixture.debugElement;
-      nativeElement = debugElement.nativeElement;
       fixture.detectChanges();
-    });
+      fixture.whenStable().then(() => {
+        fixture.detectChanges();
+        component = fixture.componentInstance;
+        debugElement = fixture.debugElement;
+        nativeElement = debugElement.nativeElement;
+      });
+    }));
 
     it('should start with year-view', () => {
       const yearView = fixture.debugElement.query(By.css('.year-view'));
@@ -69,8 +73,10 @@ describe('DlDateTimePickerComponent', () => {
     it('should contain 1 .today element for the current year', () => {
       const currentElements = fixture.debugElement.queryAll(By.css('.today'));
       expect(currentElements.length).toBe(1);
-      expect(currentElements[0].nativeElement.textContent.trim()).toBe('2017');
-      expect(currentElements[0].nativeElement.classList).toContain('1483228800000');
+
+      const currentYear = moment.utc().startOf('year');
+      expect(currentElements[0].nativeElement.textContent.trim()).toBe(currentYear.year().toString());
+      expect(currentElements[0].nativeElement.classList).toContain(currentYear.valueOf().toString());
     });
 
     it('should contain 10 .year elements with start of year utc time as class and role of gridcell', () => {
@@ -220,10 +226,11 @@ describe('DlDateTimePickerComponent', () => {
       const activeElement = fixture.debugElement.query(By.css('.active'));
       expect(activeElement.nativeElement.textContent).toBe('2017');
 
-      dispatchFakeEvent(activeElement.nativeElement, 'focus');
-      fixture.detectChanges();
+      activeElement.nativeElement.focus();
+      expect(document.activeElement).toBe(activeElement.nativeElement, document.activeElement.outerHTML);
 
       dispatchKeyboardEvent(activeElement.nativeElement, 'keydown', RIGHT_ARROW);
+
       fixture.detectChanges();
 
       const newActiveElement = fixture.debugElement.query(By.css('.active'));
@@ -248,9 +255,7 @@ describe('DlDateTimePickerComponent', () => {
       const activeElement = fixture.debugElement.query(By.css('.active'));
       expect(activeElement.nativeElement.textContent).toBe('2017');
 
-      dispatchFakeEvent(activeElement.nativeElement, 'focus');
-      fixture.detectChanges();
-
+      activeElement.nativeElement.focus();
       dispatchKeyboardEvent(activeElement.nativeElement, 'keydown', LEFT_ARROW);
       fixture.detectChanges();
 
@@ -276,9 +281,7 @@ describe('DlDateTimePickerComponent', () => {
       const activeElement = fixture.debugElement.query(By.css('.active'));
       expect(activeElement.nativeElement.textContent).toBe('2017');
 
-      dispatchFakeEvent(activeElement.nativeElement, 'focus');
-      fixture.detectChanges();
-
+      activeElement.nativeElement.focus();
       dispatchKeyboardEvent(activeElement.nativeElement, 'keydown', UP_ARROW);
       fixture.detectChanges();
 
@@ -304,8 +307,7 @@ describe('DlDateTimePickerComponent', () => {
       const activeElement = fixture.debugElement.query(By.css('.active'));
       expect(activeElement.nativeElement.textContent).toBe('2017');
 
-      dispatchFakeEvent(activeElement.nativeElement, 'focus');
-      fixture.detectChanges();
+      activeElement.nativeElement.focus();
 
       dispatchKeyboardEvent(activeElement.nativeElement, 'keydown', DOWN_ARROW);
       fixture.detectChanges();
@@ -318,9 +320,7 @@ describe('DlDateTimePickerComponent', () => {
       const activeElement = fixture.debugElement.query(By.css('.active'));
       expect(activeElement.nativeElement.textContent).toBe('2017');
 
-      dispatchFakeEvent(activeElement.nativeElement, 'focus');
-      fixture.detectChanges();
-
+      activeElement.nativeElement.focus();
       dispatchKeyboardEvent(activeElement.nativeElement, 'keydown', PAGE_UP);
       fixture.detectChanges();
 
@@ -332,9 +332,7 @@ describe('DlDateTimePickerComponent', () => {
       const activeElement = fixture.debugElement.query(By.css('.active'));
       expect(activeElement.nativeElement.textContent).toBe('2017');
 
-      dispatchFakeEvent(activeElement.nativeElement, 'focus');
-      fixture.detectChanges();
-
+      activeElement.nativeElement.focus();
       dispatchKeyboardEvent(activeElement.nativeElement, 'keydown', PAGE_DOWN);
       fixture.detectChanges();
 
@@ -346,9 +344,7 @@ describe('DlDateTimePickerComponent', () => {
       const activeElement = fixture.debugElement.query(By.css('.active'));
       expect(activeElement.nativeElement.textContent).toBe('2017');
 
-      dispatchFakeEvent(activeElement.nativeElement, 'focus');
-      fixture.detectChanges();
-
+      activeElement.nativeElement.focus();
       dispatchKeyboardEvent(activeElement.nativeElement, 'keydown', HOME);
       fixture.detectChanges();
 
@@ -357,12 +353,12 @@ describe('DlDateTimePickerComponent', () => {
     });
 
     it('should change .active element to first .year on END', () => {
+      debugElement.nativeElement.dispatchEvent(new Event('input'));
+
       const activeElement = fixture.debugElement.query(By.css('.active'));
       expect(activeElement.nativeElement.textContent).toBe('2017');
 
-      dispatchFakeEvent(activeElement.nativeElement, 'focus');
-      fixture.detectChanges();
-
+      activeElement.nativeElement.focus();
       dispatchKeyboardEvent(activeElement.nativeElement, 'keydown', END);
       fixture.detectChanges();
 
@@ -415,9 +411,5 @@ describe('DlDateTimePickerComponent', () => {
   // filter / disable years
   // filter / disable left button
   // filter / disable right button
-  // min
-  // max
-
-
   // Other screen reader issues - search for usability issues
 });

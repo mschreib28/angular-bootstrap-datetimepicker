@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, ElementRef, EventEmitter, HostListener, Input, NgZone, OnInit, Output} from '@angular/core';
+import {ChangeDetectionStrategy, Component, ElementRef, EventEmitter, Input, NgZone, OnInit, Output} from '@angular/core';
 import * as moment from 'moment';
 import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
 import {take} from 'rxjs/operators';
@@ -18,7 +18,6 @@ const DOWN_ARROW = 40;
 const RIGHT_ARROW = 39;
 const LEFT_ARROW = 37;
 
-
 class DlDateTimePickerChange {
   utc: number;
 
@@ -36,7 +35,7 @@ class DlDateTimePickerChange {
       useExisting: DlDateTimePickerComponent,
       multi: true
     }
-  ] ,
+  ],
   selector: 'dl-date-time-picker',
   styleUrls: ['./dl-date-time-picker.component.css'],
   templateUrl: './dl-date-time-picker.component.html',
@@ -133,9 +132,12 @@ export class DlDateTimePickerComponent implements OnInit, ControlValueAccessor {
   }
 
   set value(value: number) {
-    this._value = value;
-    this._changed.forEach(f => f(value));
-    this.change.emit(new DlDateTimePickerChange(value));
+    if (this._value !== value) {
+      this._value = value;
+      this._model = this._viewToFactory[this._model.view].getModel(hasValue(this._value) ? this._value : moment.utc().valueOf());
+      this._changed.forEach(f => f(value));
+      this.change.emit(new DlDateTimePickerChange(value));
+    }
   }
 
   writeValue(value: number) {
@@ -210,4 +212,8 @@ export class DlDateTimePickerComponent implements OnInit, ControlValueAccessor {
       });
     });
   }
+}
+
+function hasValue(value: any): boolean {
+  return (typeof value !== 'undefined') && (value !== null);
 }

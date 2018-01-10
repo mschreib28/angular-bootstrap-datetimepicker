@@ -8,6 +8,6 @@ import {DlDateTimePickerComponent} from './lib/dl-date-time-picker/dl-date-time-
 })
 export class AppComponent {
   title = 'Dale Lotts\' angular bootstrap date & time picker';
-  startView = 'month';
-  selectedDate: number;
+  startView = 'year';
+  selectedDate =  1514160000000;
 }
