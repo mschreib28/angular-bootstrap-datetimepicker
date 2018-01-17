@@ -81,4 +81,12 @@ export class MonthModelFactory implements ModelFactory {
   pageDown(fromMilliseconds: number): DlDateTimePickerModel {
     return this.getModel(moment.utc(fromMilliseconds).add(12, 'months').valueOf());
   }
+
+  goEnd(fromMilliseconds: number): DlDateTimePickerModel {
+    return this.getModel(moment.utc(fromMilliseconds).endOf('year').valueOf());
+  }
+
+  goHome(fromMilliseconds: number): DlDateTimePickerModel {
+    return this.getModel(moment.utc(fromMilliseconds).startOf('year').valueOf());
+  }
 }

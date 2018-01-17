@@ -114,6 +114,18 @@ describe('DlDateTimePickerComponent startView=day', () => {
       expect(viewLabel.nativeElement.textContent.trim()).toBe('Jan 2018');
     });
 
+    it('should contain 1 .past element for Dec 31', () => {
+      const pastElement = fixture.debugElement.query(By.css('.past'));
+      expect(pastElement.nativeElement.textContent.trim()).toBe('31');
+    });
+
+    it('should contain 10 .future elements for February', () => {
+      const futureElements = fixture.debugElement.queryAll(By.css('.future'));
+      expect(futureElements.length).toBe(10);
+      expect(futureElements[0].nativeElement.textContent.trim()).toBe('1');
+      expect(futureElements[9].nativeElement.textContent.trim()).toBe('10');
+    });
+
     it('should contain 42 .day elements with start of day utc time as class and role of gridcell', () => {
 
       const expectedClass = [
@@ -394,7 +406,7 @@ describe('DlDateTimePickerComponent startView=day', () => {
       expect(viewLabel.nativeElement.textContent.trim()).toBe('Feb 2018');
     });
 
-    xit('should change .active element to first .day on HOME', () => {
+    it('should change .active element to first .day on HOME', () => {
       const activeElement = fixture.debugElement.query(By.css('.active'));
       expect(activeElement.nativeElement.textContent).toBe('11');
 
@@ -406,7 +418,7 @@ describe('DlDateTimePickerComponent startView=day', () => {
       expect(newActiveElement.nativeElement.textContent).toBe('1');
     });
 
-    xit('should change .active element to last .day on END', () => {
+    it('should change .active element to last .day on END', () => {
       const activeElement = fixture.debugElement.query(By.css('.active'));
       expect(activeElement.nativeElement.textContent).toBe('11');
 
@@ -418,21 +430,20 @@ describe('DlDateTimePickerComponent startView=day', () => {
       expect(newActiveElement.nativeElement.textContent).toBe('31');
     });
 
-    xit('should do nothing when hitting non-supported key', () => {
-      (component.picker as any)._model.activeDate = new Date('2017-12-01').getTime();
+    it('should do nothing when hitting non-supported key', () => {
       fixture.detectChanges();
 
       let activeElement = fixture.debugElement.query(By.css('.active'));
-      expect(activeElement.nativeElement.textContent).toBe('Dec');
+      expect(activeElement.nativeElement.textContent).toBe('11');
 
       dispatchKeyboardEvent(activeElement.nativeElement, 'keydown', 65); // A
       fixture.detectChanges();
 
       activeElement = fixture.debugElement.query(By.css('.active'));
-      expect(activeElement.nativeElement.textContent).toBe('Dec');
+      expect(activeElement.nativeElement.textContent).toBe('11');
     });
 
-    xit('should change to .hour-view when hitting ENTER', () => {
+    it('should change to .hour-view when hitting ENTER', () => {
       const activeElement = fixture.debugElement.query(By.css('.active'));
 
       dispatchKeyboardEvent(activeElement.nativeElement, 'keydown', ENTER);
@@ -445,7 +456,7 @@ describe('DlDateTimePickerComponent startView=day', () => {
       expect(hourView).toBeTruthy();
     });
 
-    xit('should change to .hour-view when hitting SPACE', () => {
+    it('should change to .hour-view when hitting SPACE', () => {
       const activeElement = fixture.debugElement.query(By.css('.active'));
 
       dispatchKeyboardEvent(activeElement.nativeElement, 'keydown', SPACE);

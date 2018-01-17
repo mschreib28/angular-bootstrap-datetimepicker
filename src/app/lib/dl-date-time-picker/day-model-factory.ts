@@ -6,6 +6,7 @@ export class DayModelFactory implements ModelFactory {
   getModel(milliseconds: number): DlDateTimePickerModel {
 
     const startOfMonth = moment.utc(milliseconds).startOf('month');
+    const endOfMonth = moment.utc(milliseconds).endOf('month');
     const startOfView = moment.utc(startOfMonth).subtract(Math.abs(startOfMonth.weekday()), 'days');
 
     const rowNumbers = [0, 1, 2, 3, 4, 5];
@@ -45,13 +46,15 @@ export class DayModelFactory implements ModelFactory {
     function rowOfDays(rowNumber) {
       const currentMoment = moment.utc();
       const cells = columnNumbers.map((columnNumber) => {
-        const monthMoment = moment.utc(startOfView).add((rowNumber * columnNumbers.length) + columnNumber, 'days');
+        const dayMoment = moment.utc(startOfView).add((rowNumber * columnNumbers.length) + columnNumber, 'days');
         return {
-          display: monthMoment.format('D'),
-          ariaLabel: monthMoment.format('ll'),
-          value: monthMoment.valueOf(),
+          display: dayMoment.format('D'),
+          ariaLabel: dayMoment.format('ll'),
+          value: dayMoment.valueOf(),
           classes: {
-            today: monthMoment.isSame(currentMoment, 'day'),
+            past: dayMoment.isBefore(startOfMonth),
+            future: dayMoment.isAfter(endOfMonth),
+            today: dayMoment.isSame(currentMoment, 'day'),
           }
         };
       });
@@ -81,5 +84,14 @@ export class DayModelFactory implements ModelFactory {
 
   pageDown(fromMilliseconds: number): DlDateTimePickerModel {
     return this.getModel(moment.utc(fromMilliseconds).add(1, 'month').valueOf());
+  }
+
+  goEnd(fromMilliseconds: number): DlDateTimePickerModel {
+    return this.getModel(moment.utc(fromMilliseconds)
+      .endOf('month').startOf('day').valueOf());
+  }
+
+  goHome(fromMilliseconds: number): DlDateTimePickerModel {
+    return this.getModel(moment.utc(fromMilliseconds).startOf('month').valueOf());
   }
 }

@@ -1,17 +1,23 @@
 import {ModelFactory} from './model-factory';
 import {DlDateTimePickerModel} from './dl-date-time-picker-model';
 import * as moment from 'moment';
+import {Moment} from 'moment';
 
 export class YearModelFactory implements ModelFactory {
+
+  private static getStartOfDecade(milliseconds: number): Moment {
+    // Truncate the last digit from the current year to get the start of the decade
+    const startDecade = (Math.trunc(moment.utc(milliseconds).year() / 10) * 10);
+    return moment.utc(`${startDecade}-01-01`, 'YYYY-MM-DD').startOf('year');
+  }
 
   getModel(milliseconds: number): DlDateTimePickerModel {
     const rowNumbers = [0, 1];
     const columnNumbers = [0, 1, 2, 3, 4];
 
     const startYear = moment.utc(milliseconds).startOf('year');
-    // Truncate the last digit from the current year to get the start of the decade
-    const startDecade = (Math.trunc(startYear.year() / 10) * 10);
-    const startDate = moment.utc(`${startDecade}-01-01`, 'YYYY-MM-DD').startOf('year');
+    const startDate = YearModelFactory.getStartOfDecade(milliseconds);
+
     const futureYear = startDate.year() + 9;
     const pastYear = startDate.year();
 
@@ -70,7 +76,6 @@ export class YearModelFactory implements ModelFactory {
     return this.getModel(moment.utc(fromMilliseconds).add(1, 'year').valueOf());
   }
 
-
   pageDown(fromMilliseconds: number): DlDateTimePickerModel {
     return this.getModel(moment.utc(fromMilliseconds).add(10, 'year').valueOf());
   }
@@ -79,4 +84,11 @@ export class YearModelFactory implements ModelFactory {
     return this.getModel(moment.utc(fromMilliseconds).subtract(10, 'year').valueOf());
   }
 
+  goEnd(fromMilliseconds: number): DlDateTimePickerModel {
+    return this.getModel(YearModelFactory.getStartOfDecade(fromMilliseconds).add(9, 'years').endOf('year').valueOf());
+  }
+
+  goHome(fromMilliseconds: number): DlDateTimePickerModel {
+    return this.getModel(YearModelFactory.getStartOfDecade(fromMilliseconds).startOf('year').valueOf());
+  }
 }

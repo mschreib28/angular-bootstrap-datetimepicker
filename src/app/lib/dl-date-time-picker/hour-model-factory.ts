@@ -81,4 +81,15 @@ export class HourModelFactory implements ModelFactory {
   pageDown(fromMilliseconds: number): DlDateTimePickerModel {
     return this.getModel(moment.utc(fromMilliseconds).add(12, 'hours').valueOf());
   }
+
+  goEnd(fromMilliseconds: number): DlDateTimePickerModel {
+    return this.getModel(moment.utc(fromMilliseconds)
+      .endOf('day')
+      .subtract(1, 'hour')
+      .valueOf());
+  }
+
+  goHome(fromMilliseconds: number): DlDateTimePickerModel {
+    return this.getModel(moment.utc(fromMilliseconds).startOf('day').valueOf());
+  }
 }

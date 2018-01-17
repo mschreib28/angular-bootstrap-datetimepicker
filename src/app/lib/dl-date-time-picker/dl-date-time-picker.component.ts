@@ -180,11 +180,10 @@ export class DlDateTimePickerComponent implements OnInit, ControlValueAccessor {
         this._model = currentViewFactory.pageDown(this._model.activeDate);
         break;
       case END:
-        const cells = this._model.rows[this._model.rows.length - 1].cells;
-        this._model = currentViewFactory.getModel(cells[cells.length - 1].value);
+        this._model = currentViewFactory.goEnd(this._model.activeDate);
         break;
       case HOME:
-        this._model = currentViewFactory.getModel(this._model.rows[0].cells[0].value);
+        this._model = currentViewFactory.goHome(this._model.activeDate);
         break;
       case LEFT_ARROW:
         this._model = currentViewFactory.goLeft(this._model.activeDate);
