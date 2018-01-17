@@ -78,11 +78,13 @@ describe('DlDateTimePickerComponent', () => {
     it('should be dirty when clicking .year', () => {
       const pickerElement = fixture.debugElement.query(By.css('dl-date-time-picker')).nativeElement;
       expect(pickerElement.classList).toContain('ng-untouched');
+      expect(pickerElement.classList).toContain('ng-pristine');
 
       const yearElement = fixture.debugElement.query(By.css('.year'));
       yearElement.nativeElement.click();
       fixture.detectChanges();
 
+      expect(pickerElement.classList).toContain('ng-touched');
       expect(pickerElement.classList).toContain('ng-dirty');
     });
 
@@ -143,4 +145,6 @@ describe('DlDateTimePickerComponent', () => {
       expect(component.selectedDate).toBe(1293840000000);
     });
   });
+
+  // ng-pristine, ng-touched - when should these change?
 });

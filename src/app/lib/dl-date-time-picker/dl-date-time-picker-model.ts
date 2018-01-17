@@ -19,6 +19,7 @@ export interface DlDateTimePickerModel {
     ariaLabel: string;
     classes: {};
   };
+  rowLabels?: string[];
   rows: Array<{
     cells: Array<{
       display: string;

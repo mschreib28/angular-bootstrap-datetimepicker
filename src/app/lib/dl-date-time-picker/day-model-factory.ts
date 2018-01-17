@@ -5,17 +5,18 @@ import {DlDateTimePickerModel} from './dl-date-time-picker-model';
 export class DayModelFactory implements ModelFactory {
   getModel(milliseconds: number): DlDateTimePickerModel {
 
-    const startDate = moment.utc(milliseconds).startOf('month');
+    const startOfMonth = moment.utc(milliseconds).startOf('month');
+    const startOfView = moment.utc(startOfMonth).subtract(Math.abs(startOfMonth.weekday()), 'days');
 
-    const rowNumbers = [0, 1, 2];
-    const columnNumbers = [0, 1, 2, 3];
+    const rowNumbers = [0, 1, 2, 3, 4, 5];
+    const columnNumbers = [0, 1, 2, 3, 4, 5, 6];
 
-    const previousMonth = moment.utc(startDate).subtract(1, 'month');
-    const nextMonth = moment.utc(startDate).add(1, 'month');
+    const previousMonth = moment.utc(startOfMonth).subtract(1, 'month');
+    const nextMonth = moment.utc(startOfMonth).add(1, 'month');
 
-    const result = {
+    const result: DlDateTimePickerModel = {
       view: 'day',
-      viewLabel: startDate.format('MMM YYYY'),
+      viewLabel: startOfMonth.format('MMM YYYY'),
       activeDate: milliseconds,
       leftButton: {
         value: previousMonth.valueOf(),
@@ -23,16 +24,17 @@ export class DayModelFactory implements ModelFactory {
         classes: {},
       },
       upButton: {
-        value: 0,
+        value: startOfMonth.valueOf(),
         ariaLabel: `Go to month view`,
         classes: {},
       },
       rightButton: {
-        value: 0,
+        value: nextMonth.valueOf(),
         ariaLabel: `Go to ${nextMonth.format('MMM YYYY')}`,
         classes: {},
       },
-      rows: [] // rowNumbers.map(rowOfDays)
+      rowLabels: columnNumbers.map((column) => moment.utc().weekday(column).format('dd')),
+      rows: rowNumbers.map(rowOfDays)
     };
 
     result.leftButton.classes[`${result.leftButton.value}`] = true;
@@ -40,45 +42,44 @@ export class DayModelFactory implements ModelFactory {
 
     return result;
 
-    // function rowOfDays(rowNumber) {
-    //
-    //   const currentMoment = moment.utc();
-    //   const cells = columnNumbers.map((columnNumber) => {
-    //     const monthMoment = moment.utc(startDate).add((rowNumber * columnNumbers.length) + columnNumber, 'months');
-    //     return {
-    //       display: monthMoment.format('ll'),
-    //       ariaLabel: monthMoment.format('LL'),
-    //       value: monthMoment.valueOf(),
-    //       classes: {
-    //         today: monthMoment.isSame(currentMoment, 'month'),
-    //       }
-    //     };
-    //   });
-    //   return {cells};
-    // }
+    function rowOfDays(rowNumber) {
+      const currentMoment = moment.utc();
+      const cells = columnNumbers.map((columnNumber) => {
+        const monthMoment = moment.utc(startOfView).add((rowNumber * columnNumbers.length) + columnNumber, 'days');
+        return {
+          display: monthMoment.format('D'),
+          ariaLabel: monthMoment.format('ll'),
+          value: monthMoment.valueOf(),
+          classes: {
+            today: monthMoment.isSame(currentMoment, 'day'),
+          }
+        };
+      });
+      return {cells};
+    }
   }
 
   goLeft(fromMilliseconds: number): DlDateTimePickerModel {
-    return undefined;
+    return this.getModel(moment.utc(fromMilliseconds).subtract(1, 'day').valueOf());
   }
 
   goRight(fromMilliseconds: number): DlDateTimePickerModel {
-    return undefined;
+    return this.getModel(moment.utc(fromMilliseconds).add(1, 'day').valueOf());
   }
 
   goUp(fromMilliseconds: number): DlDateTimePickerModel {
-    return undefined;
+    return this.getModel(moment.utc(fromMilliseconds).subtract(7, 'days').valueOf());
   }
 
   goDown(fromMilliseconds: number): DlDateTimePickerModel {
-    return undefined;
+    return this.getModel(moment.utc(fromMilliseconds).add(7, 'days').valueOf());
   }
 
   pageUp(fromMilliseconds: number): DlDateTimePickerModel {
-    return undefined;
+    return this.getModel(moment.utc(fromMilliseconds).subtract(1, 'month').valueOf());
   }
 
   pageDown(fromMilliseconds: number): DlDateTimePickerModel {
-    return undefined;
+    return this.getModel(moment.utc(fromMilliseconds).add(1, 'month').valueOf());
   }
 }

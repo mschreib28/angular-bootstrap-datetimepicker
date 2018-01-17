@@ -6,6 +6,7 @@ import {DlDateTimePickerModel} from './dl-date-time-picker-model';
 import {YearModelFactory} from './year-model-factory';
 import {MonthModelFactory} from './month-model-factory';
 import {DayModelFactory} from './day-model-factory';
+import {HourModelFactory} from './hour-model-factory';
 
 const ENTER = 13;
 const SPACE = 32;
@@ -80,15 +81,18 @@ export class DlDateTimePickerComponent implements OnInit, ControlValueAccessor {
   private _viewToFactory = {
     year: new YearModelFactory(),
     month: new MonthModelFactory(),
-    day: new DayModelFactory()
+    day: new DayModelFactory(),
+    hour: new HourModelFactory(),
   };
 
   private _nextView = {
     'year': 'month',
-    'month': 'day'
+    'month': 'day',
+    'day': 'hour'
   };
 
   private _previousView = {
+    'hour': 'day',
     'day': 'month',
     'month': 'year'
   };

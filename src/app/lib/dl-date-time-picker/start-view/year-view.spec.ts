@@ -352,7 +352,7 @@ describe('DlDateTimePickerComponent', () => {
       expect(newActiveElement.nativeElement.textContent).toBe('2010');
     });
 
-    it('should change .active element to first .year on END', () => {
+    it('should change .active element to last .year on END', () => {
       debugElement.nativeElement.dispatchEvent(new Event('input'));
 
       const activeElement = fixture.debugElement.query(By.css('.active'));

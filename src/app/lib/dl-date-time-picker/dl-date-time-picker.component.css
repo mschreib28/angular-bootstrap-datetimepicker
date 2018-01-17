@@ -2,6 +2,7 @@
   user-select: none;
 }
 
+.col-label,
 .view-label {
   font-weight: bold;
 }
