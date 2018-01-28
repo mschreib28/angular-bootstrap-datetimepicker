@@ -1,5 +1,4 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
-import {DlDateTimePickerComponent} from './lib/dl-date-time-picker/dl-date-time-picker.component';
+import {Component} from '@angular/core';
 
 @Component({
   selector: 'dl-root',
