@@ -10,43 +10,45 @@ import {
 } from '../../../../testing/dispatch-events';
 
 @Component({
-  template: '<dl-date-time-picker startView="month"></dl-date-time-picker>'
+
+  template: '<dl-date-time-picker startView="hour"></dl-date-time-picker>'
 })
-class MonthStartViewComponent {
+class HourStartViewComponent {
   @ViewChild(DlDateTimePickerComponent) picker: DlDateTimePickerComponent;
 }
 
 @Component({
 
-  template: '<dl-date-time-picker startView="month" [(ngModel)]="selectedDate"></dl-date-time-picker>'
+  template: '<dl-date-time-picker startView="hour" [(ngModel)]="selectedDate"></dl-date-time-picker>'
 })
-class MonthStartViewWithNgModelComponent {
-  selectedDate = 1514160000000; // 2017-12-22
+class HourStartViewWithNgModelComponent {
+  selectedDate = 1516982007932; // 26 Jan 2018 15:53:27 GMT
   @ViewChild(DlDateTimePickerComponent) picker: DlDateTimePickerComponent;
 }
 
-describe('DlDateTimePickerComponent startView=month', () => {
+
+describe('DlDateTimePickerComponent startView=hour', () => {
 
   beforeEach(async(() => {
     return TestBed.configureTestingModule({
       imports: [FormsModule],
       declarations: [
         DlDateTimePickerComponent,
-        MonthStartViewComponent,
-        MonthStartViewWithNgModelComponent
+        HourStartViewComponent,
+        HourStartViewWithNgModelComponent,
       ]
     })
       .compileComponents();
   }));
 
   describe('default behavior ', () => {
-    let component: MonthStartViewComponent;
-    let fixture: ComponentFixture<MonthStartViewComponent>;
+    let component: HourStartViewComponent;
+    let fixture: ComponentFixture<HourStartViewComponent>;
     let debugElement: DebugElement;
     let nativeElement: any;
 
     beforeEach(async(() => {
-      fixture = TestBed.createComponent(MonthStartViewComponent);
+      fixture = TestBed.createComponent(HourStartViewComponent);
       fixture.detectChanges();
       fixture.whenStable().then(() => {
         fixture.detectChanges();
@@ -56,37 +58,37 @@ describe('DlDateTimePickerComponent startView=month', () => {
       });
     }));
 
-    it('should start with month-view', () => {
-      const monthView = fixture.debugElement.query(By.css('.month-view'));
-      expect(monthView).toBeTruthy();
+    it('should start with hour-view', () => {
+      const  hourView = fixture.debugElement.query(By.css('.hour-view'));
+      expect( hourView).toBeTruthy();
     });
 
     it('should contain 0 .col-label elements', () => {
-      const dayLabelElements = fixture.debugElement.queryAll(By.css('.col-label'));
-      expect(dayLabelElements.length).toBe(0);
+      const  labelElements = fixture.debugElement.queryAll(By.css('.col-label'));
+      expect(labelElements.length).toBe(0);
     });
 
-    it('should contain 12 .month elements', () => {
-      const monthElements = fixture.debugElement.queryAll(By.css('.month'));
-      expect(monthElements.length).toBe(12);
+    it('should contain 24 .hour elements', () => {
+      const  hourElements = fixture.debugElement.queryAll(By.css('.hour'));
+      expect( hourElements.length).toBe(24);
     });
 
-    it('should contain 1 .today element for the current month', () => {
+    it('should contain 1 .today element for the current  hour', () => {
       const currentElements = fixture.debugElement.queryAll(By.css('.today'));
       expect(currentElements.length).toBe(1);
-      expect(currentElements[0].nativeElement.textContent.trim()).toBe(moment.utc().format('MMM'));
-      expect(currentElements[0].nativeElement.classList).toContain(moment.utc().startOf('month').valueOf().toString());
+      expect(currentElements[0].nativeElement.textContent.trim()).toBe(moment.utc().startOf('hour').format('LT'));
+      expect(currentElements[0].nativeElement.classList).toContain(moment.utc().startOf('hour').valueOf().toString());
     });
   });
 
-  describe('ngModel=2017-12-22', () => {
-    let component: MonthStartViewWithNgModelComponent;
-    let fixture: ComponentFixture<MonthStartViewWithNgModelComponent>;
+  describe('ngModel=2018-01-26T15:53:27Z', () => {
+    let component: HourStartViewWithNgModelComponent;
+    let fixture: ComponentFixture<HourStartViewWithNgModelComponent>;
     let debugElement: DebugElement;
     let nativeElement: any;
 
     beforeEach(async(() => {
-      fixture = TestBed.createComponent(MonthStartViewWithNgModelComponent);
+      fixture = TestBed.createComponent(HourStartViewWithNgModelComponent);
       fixture.detectChanges();
       fixture.whenStable().then(() => {
         fixture.detectChanges();
@@ -96,140 +98,151 @@ describe('DlDateTimePickerComponent startView=month', () => {
       });
     }));
 
-
-    it('should contain .view-label element with "2017"', () => {
+    it('should contain .view-label element with "2018"', () => {
       const viewLabel = fixture.debugElement.query(By.css('.view-label'));
-      expect(viewLabel.nativeElement.textContent.trim()).toBe('2017');
+      expect(viewLabel.nativeElement.textContent.trim()).toBe('Jan 26, 2018');
     });
 
-    it('should contain 12 .month elements with start of month utc time as class and role of gridcell', () => {
+    it('should contain 24 .hour elements with start of hour utc time as class and role of gridcell', () => {
 
       const expectedClass = [
-        1483228800000,
-        1485907200000,
-        1488326400000,
-        1491004800000,
-        1493596800000,
-        1496275200000,
-        1498867200000,
-        1501545600000,
-        1504224000000,
-        1506816000000,
-        1509494400000,
-        1512086400000
+        1516924800000,
+        1516928400000,
+        1516932000000,
+        1516935600000,
+        1516939200000,
+        1516942800000,
+        1516946400000,
+        1516950000000,
+        1516953600000,
+        1516957200000,
+        1516960800000,
+        1516964400000,
+        1516968000000,
+        1516971600000,
+        1516975200000,
+        1516978800000,
+        1516982400000,
+        1516986000000,
+        1516989600000,
+        1516993200000,
+        1516996800000,
+        1517000400000,
+        1517004000000,
+        1517007600000,
       ];
 
-      const monthElements = fixture.debugElement.queryAll(By.css('.month'));
-      expect(monthElements.length).toBe(12);
+      const hourElements = fixture.debugElement.queryAll(By.css('.hour'));
+      expect(hourElements.length).toBe(24);
 
-      monthElements.forEach((monthElement, index) => {
+      hourElements.forEach((hourElement, index) => {
         const key = expectedClass[index];
-        const ariaLabel = moment.utc(key).format('MMM YYYY');
-        expect(monthElement.nativeElement.classList).toContain(key.toString(10));
-        expect(monthElement.attributes['role']).toBe('gridcell', index);
-        expect(monthElement.attributes['aria-label']).toBe(ariaLabel, index);
+        const ariaLabel = moment.utc(key).format('LLL');
+        expect(hourElement.nativeElement.classList).toContain(key.toString(10));
+        expect(hourElement.attributes['role']).toBe('gridcell', index);
+        expect(hourElement.attributes['aria-label']).toBe(ariaLabel, index);
       });
     });
 
     it('.left-button should contain a title', () => {
       const leftButton = fixture.debugElement.query(By.css('.left-button'));
-      expect(leftButton.attributes['title']).toBe('Go to 2016');
+      expect(leftButton.attributes['title']).toBe('Go to Jan 25, 2018');
     });
 
     it('.left-button should contain aria-label', () => {
       const leftButton = fixture.debugElement.query(By.css('.left-button'));
-      expect(leftButton.attributes['aria-label']).toBe('Go to 2016');
+      expect(leftButton.attributes['aria-label']).toBe('Go to Jan 25, 2018');
     });
 
-    it('should have a class for previous year value on .left-button ', () => {
+    it('should have a class for previous month value on .left-button ', () => {
       const leftButton = fixture.debugElement.query(By.css('.left-button'));
-      expect(leftButton.nativeElement.classList).toContain('1451606400000');
+      expect(leftButton.nativeElement.classList).toContain('1516838400000');
     });
 
-    it('should switch to previous year value after clicking .left-button', () => {
+    it('should switch to previous month value after clicking .left-button', () => {
       const leftButton = fixture.debugElement.query(By.css('.left-button'));
       leftButton.nativeElement.click();
       fixture.detectChanges();
 
       const viewLabel = fixture.debugElement.query(By.css('.view-label'));
-      expect(viewLabel.nativeElement.textContent.trim()).toBe('2016');
+      expect(viewLabel.nativeElement.textContent.trim()).toBe('Jan 25, 2018');
 
-      const monthElements = fixture.debugElement.queryAll(By.css('.month'));
-      expect(monthElements[0].nativeElement.textContent.trim()).toBe('Jan');
-      expect(monthElements[0].nativeElement.classList).toContain('1451606400000');
+      const hourElements = fixture.debugElement.queryAll(By.css('.hour'));
+      expect(hourElements[0].nativeElement.textContent.trim()).toBe('12:00 AM');
+      expect(hourElements[0].nativeElement.classList).toContain('1516838400000');
     });
 
     it('.right-button should contain a title', () => {
       const leftButton = fixture.debugElement.query(By.css('.right-button'));
-      expect(leftButton.attributes['title']).toBe('Go to 2018');
+      expect(leftButton.attributes['title']).toBe('Go to Jan 27, 2018');
     });
 
     it('.right-button should contain aria-label', () => {
       const leftButton = fixture.debugElement.query(By.css('.right-button'));
-      expect(leftButton.attributes['aria-label']).toBe('Go to 2018');
+      expect(leftButton.attributes['aria-label']).toBe('Go to Jan 27, 2018');
     });
 
-    it('should have a class for previous year value on .right-button ', () => {
+    it('should have a class for previous month value on .right-button ', () => {
       const leftButton = fixture.debugElement.query(By.css('.right-button'));
-      expect(leftButton.nativeElement.classList).toContain('1514764800000');
+      expect(leftButton.nativeElement.classList).toContain('1517011200000');
     });
 
-    it('should switch to next year value after clicking .right-button', () => {
+    it('should switch to next month value after clicking .right-button', () => {
       const rightButton = fixture.debugElement.query(By.css('.right-button'));
       rightButton.nativeElement.click();
       fixture.detectChanges();
 
       const viewLabel = fixture.debugElement.query(By.css('.view-label'));
-      expect(viewLabel.nativeElement.textContent.trim()).toBe('2018');
+      expect(viewLabel.nativeElement.textContent.trim()).toBe('Jan 27, 2018');
 
-      const monthElements = fixture.debugElement.queryAll(By.css('.month'));
-      expect(monthElements[0].nativeElement.textContent.trim()).toBe('Jan');
-      expect(monthElements[0].nativeElement.classList).toContain('1514764800000');
+      const hourElements = fixture.debugElement.queryAll(By.css('.hour'));
+      expect(hourElements[0].nativeElement.textContent.trim()).toBe('12:00 AM');
+      expect(hourElements[0].nativeElement.classList).toContain('1517011200000');
     });
 
     it('.up-button should contain a title', () => {
       const leftButton = fixture.debugElement.query(By.css('.up-button'));
-      expect(leftButton.attributes['title']).toBe('Go to 2017');
+      expect(leftButton.attributes['title']).toBe('Go to Jan 2018');
     });
 
     it('.up-button should contain aria-label', () => {
       const leftButton = fixture.debugElement.query(By.css('.up-button'));
-      expect(leftButton.attributes['aria-label']).toBe('Go to 2017');
+      expect(leftButton.attributes['aria-label']).toBe('Go to Jan 2018');
     });
 
-    it('should switch to year view after clicking .up-button', () => {
+    it('should switch to day view after clicking .up-button', () => {
       const upButton = fixture.debugElement.query(By.css('.up-button'));
       upButton.nativeElement.click();
       fixture.detectChanges();
 
       const viewLabel = fixture.debugElement.query(By.css('.view-label'));
-      expect(viewLabel.nativeElement.textContent).toBe('2010-2019');
+      expect(viewLabel.nativeElement.textContent.trim()).toBe('Jan 2018');
 
-      const yearView = fixture.debugElement.query(By.css('.year-view'));
-      expect(yearView).toBeTruthy();
+      const monthView = fixture.debugElement.query(By.css('.day-view'));
+      expect(monthView).toBeTruthy();
     });
 
-    it('should not emit a change event when clicking .month', () => {
+    it('should not emit a change event when clicking .hour', () => {
       const changeSpy = jasmine.createSpy('change listener');
       component.picker.change.subscribe(changeSpy);
 
-      const monthElements = fixture.debugElement.queryAll(By.css('.month'));
-      monthElements[9].nativeElement.click(); // OCT
+      const hourElements = fixture.debugElement.queryAll(By.css('.hour'));
+      hourElements[0].nativeElement.click();
       fixture.detectChanges();
 
       expect(changeSpy).not.toHaveBeenCalled();
     });
 
-    it('should change to .day-view when selecting .month', () => {
-      const monthElements = fixture.debugElement.queryAll(By.css('.month'));
-      monthElements[0].nativeElement.click(); // 2009
+    it('should change to .minute-view when selecting .hour', () => {
+      const hourElements = fixture.debugElement.queryAll(By.css('.hour'));
+      hourElements[14].nativeElement.click(); //  2:00 PM
       fixture.detectChanges();
 
-      const monthView = fixture.debugElement.query(By.css('.month-view'));
-      expect(monthView).toBeFalsy();
+      const hourView = fixture.debugElement.query(By.css('.hour-view'));
+      expect(hourView).toBeFalsy();
 
-      const dayView = fixture.debugElement.query(By.css('.day-view'));
-      expect(dayView).toBeTruthy();
+      const minuteView = fixture.debugElement.query(By.css('.minute-view'));
+      expect(minuteView).toBeTruthy();
     });
 
     it('should have one .active element', () => {
@@ -239,186 +252,185 @@ describe('DlDateTimePickerComponent startView=month', () => {
 
     it('should change .active element on right arrow', () => {
       const activeElement = fixture.debugElement.query(By.css('.active'));
-      expect(activeElement.nativeElement.textContent).toBe('Dec');
+      expect(activeElement.nativeElement.textContent).toBe('3:00 PM');
 
       activeElement.nativeElement.focus();
       dispatchKeyboardEvent(activeElement.nativeElement, 'keydown', RIGHT_ARROW);
       fixture.detectChanges();
 
       const newActiveElement = fixture.debugElement.query(By.css('.active'));
-      expect(newActiveElement.nativeElement.textContent).toBe('Jan');
+      expect(newActiveElement.nativeElement.textContent).toBe('4:00 PM');
     });
 
-    it('should change to next year when last .month is .active element and pressing on right arrow', () => {
-      (component.picker as any)._model.activeDate = new Date('2017-12-01').getTime();
+    it('should change to next day when last .hour is .active element and pressing on right arrow', () => {
+      (component.picker as any)._model.activeDate = new Date('2018-01-26T23:00:00Z').getTime();
       fixture.detectChanges();
 
       dispatchKeyboardEvent(fixture.debugElement.query(By.css('.active')).nativeElement, 'keydown', RIGHT_ARROW); // 2018
       fixture.detectChanges();
 
       const activeElement = fixture.debugElement.query(By.css('.active'));
-      expect(activeElement.nativeElement.textContent).toBe('Jan');
+      expect(activeElement.nativeElement.textContent).toBe('12:00 AM');
 
       const viewLabel = fixture.debugElement.query(By.css('.view-label'));
-      expect(viewLabel.nativeElement.textContent.trim()).toBe('2018');
+      expect(viewLabel.nativeElement.textContent.trim()).toBe('Jan 27, 2018');
     });
 
     it('should change .active element on left arrow', () => {
       const activeElement = fixture.debugElement.query(By.css('.active'));
-      expect(activeElement.nativeElement.textContent).toBe('Dec');
+      expect(activeElement.nativeElement.textContent).toBe('3:00 PM');
 
       activeElement.nativeElement.focus();
       dispatchKeyboardEvent(activeElement.nativeElement, 'keydown', LEFT_ARROW);
       fixture.detectChanges();
 
       const newActiveElement = fixture.debugElement.query(By.css('.active'));
-      expect(newActiveElement.nativeElement.textContent).toBe('Nov');
+      expect(newActiveElement.nativeElement.textContent).toBe('2:00 PM');
     });
 
-    it('should change to previous year when first .month is .active element and pressing on left arrow', () => {
-      (component.picker as any)._model.activeDate = new Date('2017-01-01').getTime();
+    it('should change to previous day when first .hour is .active element and pressing on left arrow', () => {
+      (component.picker as any)._model.activeDate = new Date('2018-01-26T00:00:00Z').getTime();
       fixture.detectChanges();
 
       dispatchKeyboardEvent(fixture.debugElement.query(By.css('.active')).nativeElement, 'keydown', LEFT_ARROW); // 2019
       fixture.detectChanges();
 
       const activeElement = fixture.debugElement.query(By.css('.active'));
-      expect(activeElement.nativeElement.textContent).toBe('Dec');
+      expect(activeElement.nativeElement.textContent).toBe('11:00 PM');
 
       const viewLabel = fixture.debugElement.query(By.css('.view-label'));
-      expect(viewLabel.nativeElement.textContent.trim()).toBe('2016');
+      expect(viewLabel.nativeElement.textContent.trim()).toBe('Jan 25, 2018');
     });
 
     it('should change .active element on up arrow', () => {
       const activeElement = fixture.debugElement.query(By.css('.active'));
-      expect(activeElement.nativeElement.textContent).toBe('Dec');
+      expect(activeElement.nativeElement.textContent).toBe('3:00 PM');
 
       activeElement.nativeElement.focus();
       dispatchKeyboardEvent(activeElement.nativeElement, 'keydown', UP_ARROW);
       fixture.detectChanges();
 
       const newActiveElement = fixture.debugElement.query(By.css('.active'));
-      expect(newActiveElement.nativeElement.textContent).toBe('Aug');
+      expect(newActiveElement.nativeElement.textContent).toBe('11:00 AM');
     });
 
-    it('should change to previous year when first .month is .active element and pressing on up arrow', () => {
-      (component.picker as any)._model.activeDate = new Date('2017-01-01').getTime();
+    it('should change to previous day when first .hour is .active element and pressing on up arrow', () => {
+      (component.picker as any)._model.activeDate = new Date('2018-01-26T00:00:00Z').getTime();
       fixture.detectChanges();
 
       dispatchKeyboardEvent(fixture.debugElement.query(By.css('.active')).nativeElement, 'keydown', UP_ARROW); // 2019
       fixture.detectChanges();
 
       const activeElement = fixture.debugElement.query(By.css('.active'));
-      expect(activeElement.nativeElement.textContent).toBe('Sep');
+      expect(activeElement.nativeElement.textContent).toBe('8:00 PM');
 
       const viewLabel = fixture.debugElement.query(By.css('.view-label'));
-      expect(viewLabel.nativeElement.textContent.trim()).toBe('2016');
+      expect(viewLabel.nativeElement.textContent.trim()).toBe('Jan 25, 2018');
     });
 
     it('should change .active element on down arrow', () => {
       const activeElement = fixture.debugElement.query(By.css('.active'));
-      expect(activeElement.nativeElement.textContent).toBe('Dec');
+      expect(activeElement.nativeElement.textContent).toBe('3:00 PM');
 
       activeElement.nativeElement.focus();
       dispatchKeyboardEvent(activeElement.nativeElement, 'keydown', DOWN_ARROW);
       fixture.detectChanges();
 
       const newActiveElement = fixture.debugElement.query(By.css('.active'));
-      expect(newActiveElement.nativeElement.textContent).toBe('Apr');
+      expect(newActiveElement.nativeElement.textContent).toBe('7:00 PM');
     });
 
     it('should change .active element on page-up (fn+up-arrow)', () => {
       const activeElement = fixture.debugElement.query(By.css('.active'));
-      expect(activeElement.nativeElement.textContent).toBe('Dec');
+      expect(activeElement.nativeElement.textContent).toBe('3:00 PM');
 
       activeElement.nativeElement.focus();
       dispatchKeyboardEvent(activeElement.nativeElement, 'keydown', PAGE_UP);
       fixture.detectChanges();
 
       const newActiveElement = fixture.debugElement.query(By.css('.active'));
-      expect(newActiveElement.nativeElement.textContent).toBe('Dec');
+      expect(newActiveElement.nativeElement.textContent).toBe('3:00 PM');
 
       const viewLabel = fixture.debugElement.query(By.css('.view-label'));
-      expect(viewLabel.nativeElement.textContent.trim()).toBe('2016');
+      expect(viewLabel.nativeElement.textContent.trim()).toBe('Jan 25, 2018');
     });
 
     it('should change .active element on page-down (fn+down-arrow)', () => {
       const activeElement = fixture.debugElement.query(By.css('.active'));
-      expect(activeElement.nativeElement.textContent).toBe('Dec');
+      expect(activeElement.nativeElement.textContent).toBe('3:00 PM');
 
       activeElement.nativeElement.focus();
       dispatchKeyboardEvent(activeElement.nativeElement, 'keydown', PAGE_DOWN);
       fixture.detectChanges();
 
       const newActiveElement = fixture.debugElement.query(By.css('.active'));
-      expect(newActiveElement.nativeElement.textContent).toBe('Dec');
+      expect(newActiveElement.nativeElement.textContent).toBe('3:00 PM');
 
       const viewLabel = fixture.debugElement.query(By.css('.view-label'));
-      expect(viewLabel.nativeElement.textContent.trim()).toBe('2018');
+      expect(viewLabel.nativeElement.textContent.trim()).toBe('Jan 27, 2018');
     });
 
-    it('should change .active element to first .month on HOME', () => {
+    it('should change .active element to first .hour on HOME', () => {
       const activeElement = fixture.debugElement.query(By.css('.active'));
-      expect(activeElement.nativeElement.textContent).toBe('Dec');
+      expect(activeElement.nativeElement.textContent).toBe('3:00 PM');
 
       activeElement.nativeElement.focus();
       dispatchKeyboardEvent(activeElement.nativeElement, 'keydown', HOME);
       fixture.detectChanges();
 
       const newActiveElement = fixture.debugElement.query(By.css('.active'));
-      expect(newActiveElement.nativeElement.textContent).toBe('Jan');
+      expect(newActiveElement.nativeElement.textContent).toBe('12:00 AM');
     });
 
-    it('should change .active element to last .month on END', () => {
+    it('should change .active element to last .hour on END', () => {
       const activeElement = fixture.debugElement.query(By.css('.active'));
-      expect(activeElement.nativeElement.textContent).toBe('Dec');
+      expect(activeElement.nativeElement.textContent).toBe('3:00 PM');
 
       activeElement.nativeElement.focus();
       dispatchKeyboardEvent(activeElement.nativeElement, 'keydown', END);
       fixture.detectChanges();
 
       const newActiveElement = fixture.debugElement.query(By.css('.active'));
-      expect(newActiveElement.nativeElement.textContent).toBe('Dec');
+      expect(newActiveElement.nativeElement.textContent).toBe('11:00 PM');
     });
 
     it('should do nothing when hitting non-supported key', () => {
-      (component.picker as any)._model.activeDate = new Date('2017-12-01').getTime();
       fixture.detectChanges();
 
       let activeElement = fixture.debugElement.query(By.css('.active'));
-      expect(activeElement.nativeElement.textContent).toBe('Dec');
+      expect(activeElement.nativeElement.textContent).toBe('3:00 PM');
 
       dispatchKeyboardEvent(activeElement.nativeElement, 'keydown', 65); // A
       fixture.detectChanges();
 
       activeElement = fixture.debugElement.query(By.css('.active'));
-      expect(activeElement.nativeElement.textContent).toBe('Dec');
+      expect(activeElement.nativeElement.textContent).toBe('3:00 PM');
     });
 
-    it('should change to .day-view when hitting ENTER', () => {
+    it('should change to .minute-view when hitting ENTER', () => {
       const activeElement = fixture.debugElement.query(By.css('.active'));
 
       dispatchKeyboardEvent(activeElement.nativeElement, 'keydown', ENTER);
       fixture.detectChanges();
 
-      const monthView = fixture.debugElement.query(By.css('.month-view'));
-      expect(monthView).toBeFalsy();
+      const hourView = fixture.debugElement.query(By.css('.hour-view'));
+      expect(hourView).toBeFalsy();
 
-      const dayView = fixture.debugElement.query(By.css('.day-view'));
-      expect(dayView).toBeTruthy();
+      const minuteView = fixture.debugElement.query(By.css('.minute-view'));
+      expect(minuteView).toBeTruthy();
     });
 
-    it('should change to .day-view when hitting SPACE', () => {
+    it('should change to .minute-view when hitting SPACE', () => {
       const activeElement = fixture.debugElement.query(By.css('.active'));
 
       dispatchKeyboardEvent(activeElement.nativeElement, 'keydown', SPACE);
       fixture.detectChanges();
 
-      const monthView = fixture.debugElement.query(By.css('.month-view'));
-      expect(monthView).toBeFalsy();
+      const hourView = fixture.debugElement.query(By.css('.hour-view'));
+      expect(hourView).toBeFalsy();
 
-      const dayView = fixture.debugElement.query(By.css('.day-view'));
-      expect(dayView).toBeTruthy();
+      const minuteView = fixture.debugElement.query(By.css('.minute-view'));
+      expect(minuteView).toBeTruthy();
     });
   });
 });

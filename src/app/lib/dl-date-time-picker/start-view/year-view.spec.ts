@@ -65,6 +65,11 @@ describe('DlDateTimePickerComponent', () => {
       expect(viewLabel.nativeElement.textContent).toBe('2010-2019');
     });
 
+    it('should contain 0 .col-label elements', () => {
+      const dayLabelElements = fixture.debugElement.queryAll(By.css('.col-label'));
+      expect(dayLabelElements.length).toBe(0);
+    });
+
     it('should contain 10 .year elements', () => {
       const yearElements = fixture.debugElement.queryAll(By.css('.year'));
       expect(yearElements.length).toBe(10);

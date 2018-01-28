@@ -7,6 +7,7 @@ import {YearModelFactory} from './year-model-factory';
 import {MonthModelFactory} from './month-model-factory';
 import {DayModelFactory} from './day-model-factory';
 import {HourModelFactory} from './hour-model-factory';
+import {MinuteModelFactory} from './minute-model-factory';
 
 const ENTER = 13;
 const SPACE = 32;
@@ -47,10 +48,11 @@ export class DlDateTimePickerComponent implements OnInit, ControlValueAccessor {
   maxView: 'year' | 'month' | 'day' | 'hour' | 'minute';
 
   @Input()
-  startView: 'year' | 'month' | 'day' | 'hour' | 'minute';
+  startView: 'year' | 'month' | 'day' | 'hour' | 'minute' = 'day';
 
   @Input()
-  minView: 'year' | 'month' | 'day' | 'hour' | 'minute';
+  minView: 'year' | 'month' | 'day' | 'hour' | 'minute' = 'minute';
+
 
   /** Emits when a `change` event is fired on this date/time picker. */
   @Output()
@@ -83,15 +85,18 @@ export class DlDateTimePickerComponent implements OnInit, ControlValueAccessor {
     month: new MonthModelFactory(),
     day: new DayModelFactory(),
     hour: new HourModelFactory(),
+    minute: new MinuteModelFactory(),
   };
 
   private _nextView = {
     'year': 'month',
     'month': 'day',
-    'day': 'hour'
+    'day': 'hour',
+    'hour': 'minute'
   };
 
   private _previousView = {
+    'minute': 'hour',
     'hour': 'day',
     'day': 'month',
     'month': 'year'
@@ -103,17 +108,20 @@ export class DlDateTimePickerComponent implements OnInit, ControlValueAccessor {
   }
 
   ngOnInit(): void {
-    this._model = this._viewToFactory[this.startView || 'year'].getModel(moment.utc().valueOf());
+    this._model = this._viewToFactory[this.startView || 'day'].getModel(moment.utc().valueOf());
   }
 
   _onDateClick(milliseconds: number) {
 
+    let nextView = this._nextView[this._model.view];
+
     if (this.minView === this._model.view) {
       this.value = milliseconds;
-      this._model.view = this.startView;
+      nextView = this.startView;
     }
 
-    this._model = this._viewToFactory[this._nextView[this._model.view]].getModel(milliseconds);
+    this._model = this._viewToFactory[nextView].getModel(milliseconds);
+
     this._onTouch();
   }
 

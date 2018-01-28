@@ -10,16 +10,14 @@ import {
 } from '../../../../testing/dispatch-events';
 
 @Component({
-
-  template: '<dl-date-time-picker startView="day"></dl-date-time-picker>'
+  template: '<dl-date-time-picker></dl-date-time-picker>'
 })
 class DayStartViewComponent {
   @ViewChild(DlDateTimePickerComponent) picker: DlDateTimePickerComponent;
 }
 
 @Component({
-
-  template: '<dl-date-time-picker startView="day" [(ngModel)]="selectedDate"></dl-date-time-picker>'
+  template: '<dl-date-time-picker [(ngModel)]="selectedDate"></dl-date-time-picker>'
 })
 class DayStartViewWithNgModelComponent {
   selectedDate = 1515628800000; // 2018-01-11
@@ -27,9 +25,10 @@ class DayStartViewWithNgModelComponent {
 }
 
 @Component({
-  template: '<dl-date-time-picker startView="month"></dl-date-time-picker>'
+  template: '<dl-date-time-picker [startView]="startView"></dl-date-time-picker>'
 })
-class YearStartViewComponent {
+class UndefinedStartViewComponent {
+  startView: string;  // intentionally did not assign value
   @ViewChild(DlDateTimePickerComponent) picker: DlDateTimePickerComponent;
 }
 
@@ -42,7 +41,7 @@ describe('DlDateTimePickerComponent startView=day', () => {
         DlDateTimePickerComponent,
         DayStartViewComponent,
         DayStartViewWithNgModelComponent,
-        YearStartViewComponent
+        UndefinedStartViewComponent
       ]
     })
       .compileComponents();
@@ -88,6 +87,29 @@ describe('DlDateTimePickerComponent startView=day', () => {
       expect(currentElements.length).toBe(1);
       expect(currentElements[0].nativeElement.textContent.trim()).toBe(moment.utc().format('D'));
       expect(currentElements[0].nativeElement.classList).toContain(moment.utc().startOf('day').valueOf().toString());
+    });
+  });
+
+  describe('undefined start view', () => {
+    let component: DayStartViewComponent;
+    let fixture: ComponentFixture<UndefinedStartViewComponent>;
+    let debugElement: DebugElement;
+    let nativeElement: any;
+
+    beforeEach(async(() => {
+      fixture = TestBed.createComponent(UndefinedStartViewComponent);
+      fixture.detectChanges();
+      fixture.whenStable().then(() => {
+        fixture.detectChanges();
+        component = fixture.componentInstance;
+        debugElement = fixture.debugElement;
+        nativeElement = debugElement.nativeElement;
+      });
+    }));
+
+    it('should start with day-view', () => {
+      const dayView = fixture.debugElement.query(By.css('.day-view'));
+      expect(dayView).toBeTruthy();
     });
   });
 

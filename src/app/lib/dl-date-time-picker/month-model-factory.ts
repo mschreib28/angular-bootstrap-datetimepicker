@@ -24,7 +24,7 @@ export class MonthModelFactory implements ModelFactory {
       },
       upButton: {
         value: startDate.valueOf(),
-        ariaLabel: `Go to year view`,
+        ariaLabel: `Go to ${startDate.format('YYYY')}`,
         classes: {},
       },
       rightButton: {

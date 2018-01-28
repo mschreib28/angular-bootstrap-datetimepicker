@@ -24,7 +24,7 @@ export class HourModelFactory implements ModelFactory {
       },
       upButton: {
         value: startDate.valueOf(),
-        ariaLabel: `Go to year view`,
+        ariaLabel: `Go to ${startDate.format('MMM YYYY')}`,
         classes: {},
       },
       rightButton: {
@@ -75,18 +75,21 @@ export class HourModelFactory implements ModelFactory {
   }
 
   pageUp(fromMilliseconds: number): DlDateTimePickerModel {
-    return this.getModel(moment.utc(fromMilliseconds).subtract(12, 'hours').valueOf());
+    return this.getModel(moment.utc(fromMilliseconds).subtract(1, 'day').valueOf());
   }
 
   pageDown(fromMilliseconds: number): DlDateTimePickerModel {
-    return this.getModel(moment.utc(fromMilliseconds).add(12, 'hours').valueOf());
+    return this.getModel(moment.utc(fromMilliseconds).add(1, 'day').valueOf());
   }
 
   goEnd(fromMilliseconds: number): DlDateTimePickerModel {
-    return this.getModel(moment.utc(fromMilliseconds)
-      .endOf('day')
-      .subtract(1, 'hour')
-      .valueOf());
+    return this.getModel(
+      moment
+        .utc(fromMilliseconds)
+        .endOf('day')
+        .startOf('hour')
+        .valueOf()
+    );
   }
 
   goHome(fromMilliseconds: number): DlDateTimePickerModel {
