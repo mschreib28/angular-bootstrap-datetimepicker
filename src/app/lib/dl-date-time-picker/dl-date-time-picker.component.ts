@@ -44,14 +44,6 @@ class DlDateTimePickerChange {
 })
 export class DlDateTimePickerComponent implements OnInit, ControlValueAccessor {
 
-  private static readonly ALL_VIEWS = [
-    'minute',
-    'hour',
-    'day',
-    'month',
-    'year'
-  ];
-
   @Input()
   maxView: 'year' | 'month' | 'day' | 'hour' | 'minute';
 
@@ -96,14 +88,14 @@ export class DlDateTimePickerComponent implements OnInit, ControlValueAccessor {
     minute: new MinuteModelFactory(),
   };
 
-  private _nextView: any = {
+  private _nextView = {
     'year': 'month',
     'month': 'day',
     'day': 'hour',
     'hour': 'minute'
   };
 
-  private _previousView: any = {
+  private _previousView = {
     'minute': 'hour',
     'hour': 'day',
     'day': 'month',
