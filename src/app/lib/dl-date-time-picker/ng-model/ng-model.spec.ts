@@ -144,7 +144,22 @@ describe('DlDateTimePickerComponent', () => {
       expect(changeSpy.calls.first().args[0].utc).toBe(1293840000000);
       expect(component.selectedDate).toBe(1293840000000);
     });
-  });
 
+    it('should not emit change event if value does not change', () => {
+      const changeSpy = jasmine.createSpy('change listener');
+      component.picker.change.subscribe(changeSpy);
+
+      component.picker.value = 1293840000000;
+      fixture.detectChanges();
+
+      component.picker.value = 1293840000000;
+      fixture.detectChanges();
+
+      expect(component.picker.value).toBe(1293840000000);
+      expect(changeSpy).toHaveBeenCalledTimes(1);
+      expect(changeSpy.calls.first().args[0].utc).toBe(1293840000000);
+      expect(component.selectedDate).toBe(1293840000000);
+    });
+  });
   // ng-pristine, ng-touched - when should these change?
 });

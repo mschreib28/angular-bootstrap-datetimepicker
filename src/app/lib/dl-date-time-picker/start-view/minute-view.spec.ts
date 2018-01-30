@@ -62,6 +62,7 @@ describe('DlDateTimePickerComponent startView=minute', () => {
       const minuteView = fixture.debugElement.query(By.css('.minute-view'));
       expect(minuteView).toBeTruthy();
     });
+
     it('should contain 0 .col-label elements', () => {
       const labelElements = fixture.debugElement.queryAll(By.css('.col-label'));
       expect(labelElements.length).toBe(0);
@@ -324,7 +325,6 @@ describe('DlDateTimePickerComponent startView=minute', () => {
     });
 
     it('should change .active element on down arrow', () => {
-      //(component.picker as any)._model.activeDate = new Date('2018-01-26T15:30:00Z').getTime();
       component.picker.value = new Date('2018-01-26T15:30:00Z').getTime();
       fixture.detectChanges();
 
@@ -421,7 +421,7 @@ describe('DlDateTimePickerComponent startView=minute', () => {
       expect(component.picker.value).toBe(1516981800000);
     });
 
-    xit('should emit change event when hitting SPACE', () => {
+    it('should emit change event when hitting SPACE', () => {
       const changeSpy = jasmine.createSpy('change listener');
       component.picker.change.subscribe(changeSpy);
 
@@ -432,7 +432,7 @@ describe('DlDateTimePickerComponent startView=minute', () => {
 
       const minuteView = fixture.debugElement.query(By.css('.minute-view'));
       expect(minuteView).toBeTruthy();
-      expect(changeSpy).toHaveBeenCalled()
+      expect(changeSpy).toHaveBeenCalled();
       expect(component.picker.value).toBe(1516981800000);
     });
   });

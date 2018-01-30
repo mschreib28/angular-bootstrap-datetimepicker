@@ -6,7 +6,7 @@ import {FormsModule} from '@angular/forms';
 
 @Component({
 
-  template: '<dl-date-time-picker minView="month" [(ngModel)]="selectedDate"></dl-date-time-picker>'
+  template: '<dl-date-time-picker startView="month" minView="month" [(ngModel)]="selectedDate"></dl-date-time-picker>'
 })
 class MonthMinViewComponent {
   selectedDate: number;
@@ -50,14 +50,19 @@ describe('DlDateTimePickerComponent minView=month', () => {
       expect(monthView).toBeTruthy();
     });
 
+    it('should store the value in ngModel when clicking a .month', () => {
+      const changeSpy = jasmine.createSpy('change listener');
+      component.picker.change.subscribe(changeSpy);
 
-    xit('should store the value in ngModel when clicking a .month', () => {
+      expect(component.picker.value).toBeUndefined();
+
       const monthElements = fixture.debugElement.queryAll(By.css('.month'));
       monthElements[9].nativeElement.click();
       fixture.detectChanges();
 
-      expect(component.picker.value).toBe(0);
-      expect(component.selectedDate).toBe(0);
+      expect(component.picker.value).not.toBeUndefined();
+      expect(component.picker.value).toBe(component.selectedDate);
+      expect(changeSpy).toHaveBeenCalled();
     });
   });
 });
